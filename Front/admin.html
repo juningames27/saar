@@ -149,12 +149,26 @@
           </div>
         </div>
 
-        <div class="admin">
-          <div class="who">
-            <b id="topName">Wendel</b>
-            <span>Administrador</span>
+        <div class="admin" id="adminMenu">
+          <button class="admin-trigger" id="adminTrigger" aria-haspopup="true" aria-expanded="false">
+            <div class="who">
+              <b id="topName">Wendel</b>
+              <span>Administrador</span>
+            </div>
+            <div class="ava" id="topAva">W</div>
+            <svg class="admin-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+
+          <div class="admin-dropdown" id="adminDropdown">
+            <button class="admin-dd-item" id="ddVisual">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="13.5" cy="6.5" r=".5"/><circle cx="17.5" cy="10.5" r=".5"/><circle cx="8.5" cy="7.5" r=".5"/><circle cx="6.5" cy="12.5" r=".5"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.563-2.512 5.563-5.563C22 6.012 17.5 2 12 2z"/></svg>
+              Configuração de visual
+            </button>
+            <button class="admin-dd-item danger" id="ddSair">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+              Sair
+            </button>
           </div>
-          <div class="ava">W</div>
         </div>
       </header>
 
@@ -768,6 +782,11 @@
                     <input type="date" id="adm-nasc">
                   </div>
                   <div class="field full">
+                    <label for="adm-senha">Senha de acesso</label>
+                    <input type="text" id="adm-senha" placeholder="Senha que o admin usará para entrar">
+                    <p class="hint">No cadastro é obrigatória. Ao editar, deixe em branco para manter a atual.</p>
+                  </div>
+                  <div class="field full">
                     <label>Nível de acesso</label>
                     <div class="adm-nivel-opts" id="admNivelOpts">
                       <label class="adm-radio">
@@ -906,6 +925,57 @@
     </div>
   </div>
 
+  <!-- ===== Modal: ver material ===== -->
+  <div class="modal" id="modalMaterial">
+    <div class="card modal-mat-card">
+      <button class="modal-close" id="matVerClose" aria-label="Fechar">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+      <div class="card-head">
+        <div class="ic">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        </div>
+        <div>
+          <h2 id="matVerNome">Material</h2>
+          <p id="matVerMeta"></p>
+        </div>
+      </div>
+      <p id="matVerDesc" class="mat-ver-desc"></p>
+      <div id="matVerPreview" class="mat-preview"></div>
+      <div class="form-actions">
+        <a id="matVerBaixar" class="btn btn-primary" download>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Baixar arquivo
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== Modal: configuração de visual ===== -->
+  <div class="modal" id="modalVisual">
+    <div class="card modal-card">
+      <button class="modal-close" id="visualClose" aria-label="Fechar">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+      <div class="card-head">
+        <div class="ic">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="13.5" cy="6.5" r=".5"/><circle cx="17.5" cy="10.5" r=".5"/><circle cx="8.5" cy="7.5" r=".5"/><circle cx="6.5" cy="12.5" r=".5"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.563-2.512 5.563-5.563C22 6.012 17.5 2 12 2z"/></svg>
+        </div>
+        <div>
+          <h2>Configuração de visual</h2>
+          <p>Escolha a cor de fundo do painel.</p>
+        </div>
+      </div>
+      <div class="tema-grid" id="temaGrid">
+        <button class="tema-opt" data-tema="azul"><span class="tema-amostra" style="background:linear-gradient(135deg,#0f172a,#1e293b)"></span><span>Azul</span></button>
+        <button class="tema-opt" data-tema="vermelho"><span class="tema-amostra" style="background:linear-gradient(135deg,#1a1012,#2a181c)"></span><span>Vermelho</span></button>
+        <button class="tema-opt" data-tema="roxo"><span class="tema-amostra" style="background:linear-gradient(135deg,#14101f,#221a3a)"></span><span>Roxo</span></button>
+        <button class="tema-opt" data-tema="preto"><span class="tema-amostra" style="background:linear-gradient(135deg,#0a0a0a,#1a1a1a)"></span><span>Preto</span></button>
+        <button class="tema-opt" data-tema="branco"><span class="tema-amostra" style="background:linear-gradient(135deg,#e2e8f0,#ffffff);border:1px solid #cbd5e1"></span><span>Branco</span></button>
+      </div>
+    </div>
+  </div>
+
   <!-- Toast global -->
   <div id="toastWrap" aria-live="polite"></div>
   <!-- Modal de confirmação -->
@@ -919,6 +989,8 @@
     </div>
   </div>
 
+  <script src="config.js"></script>
+  <script src="api.js"></script>
   <script src="Admin.js"></script>
 </body>
 </html>
