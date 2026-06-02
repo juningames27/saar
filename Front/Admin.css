@@ -146,13 +146,13 @@ body {
 }
 
 .side-item:hover {
-  background: var(--accent-light);
+  background: transparent;
   color: var(--accent);
 }
 
 .side-item.active {
-  background: var(--accent-light);
-  color: var(--accent);
+  background: transparent;
+  color: var(--accent-hover);
   font-weight: 700;
 }
 
@@ -166,7 +166,7 @@ body {
 }
 
 .side-item.danger:hover {
-  background: var(--danger-light);
+  background: transparent;
   color: var(--danger);
 }
 
@@ -780,8 +780,8 @@ body {
   transition: background .12s, color .12s;
 }
 .sub-item svg { width: 16px; height: 16px; flex-shrink: 0; }
-.sub-item:hover { background: var(--accent-light); color: var(--accent); }
-.sub-item.active { background: var(--accent-light); color: var(--accent); font-weight: 700; }
+.sub-item:hover { background: transparent; color: var(--accent); }
+.sub-item.active { background: transparent; color: var(--accent-hover); font-weight: 700; }
 
 /* ===== Cabeçalho de página ===== */
 .page-header {
