@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sistema de Acesso aos Alunos de Robótica</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="Login.css">
+  <script src="config.js"></script>
+  <script src="api.js"></script>
+</head>
+<body>
+
+  <!-- ===== Faixa superior com os logos ===== -->
+  <header class="topbar">
+    <div class="topbar-left">
+      <img src="SAAR.png" alt="SAAR" class="logo-saar">
+    </div>
+    <div class="topbar-right">
+      <img src="NTE.png" alt="NTE" class="logo-org">
+      <img src="SEMED.png" alt="SEMED" class="logo-org">
+    </div>
+  </header>
+
+  <!-- ===== Login ===== -->
+  <main class="login-shell">
+    <div class="card">
+
+      <!-- Lado da marca -->
+      <section class="welcome">
+        <div class="welcome-text">
+          <h1>SAAR</h1>
+          <p>Sistema de Acesso aos Alunos de Robótica</p>
+        </div>
+
+        <div class="welcome-art">
+          <svg viewBox="0 0 320 320" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <!-- sombra -->
+            <ellipse cx="160" cy="292" rx="80" ry="12" fill="#ffffff" fill-opacity="0.07"/>
+
+            <!-- sinais -->
+            <g fill="#1fd49a" fill-opacity="0.7">
+              <circle cx="250" cy="96"  r="4"/>
+              <circle cx="266" cy="112" r="2.5"/>
+              <circle cx="62"  cy="150" r="3.5"/>
+            </g>
+
+            <!-- antena -->
+            <line x1="160" y1="88" x2="160" y2="66" stroke="#bde7d6" stroke-width="4" stroke-linecap="round"/>
+            <circle cx="160" cy="60" r="6" fill="#1fd49a"/>
+
+            <!-- braços -->
+            <rect x="86" y="182" width="16" height="58" rx="8" fill="#bde7d6"/>
+            <circle cx="94" cy="244" r="8" fill="#1fd49a"/>
+            <g transform="rotate(-14 228 198)">
+              <rect x="220" y="170" width="16" height="56" rx="8" fill="#bde7d6"/>
+              <circle cx="228" cy="166" r="8" fill="#1fd49a"/>
+            </g>
+
+            <!-- cabeça -->
+            <circle cx="110" cy="126" r="6" fill="#1fd49a"/>
+            <circle cx="210" cy="126" r="6" fill="#1fd49a"/>
+            <rect x="112" y="90" width="96" height="74" rx="20" fill="#ffffff"/>
+            <rect x="124" y="104" width="72" height="44" rx="13" fill="#0d4a3b"/>
+            <circle cx="146" cy="124" r="7.5" fill="#1fd49a"/>
+            <circle cx="174" cy="124" r="7.5" fill="#1fd49a"/>
+            <circle cx="148" cy="122" r="2.4" fill="#0d4a3b"/>
+            <circle cx="176" cy="122" r="2.4" fill="#0d4a3b"/>
+            <path d="M150 137 Q160 144 170 137" stroke="#1fd49a" stroke-width="3" fill="none" stroke-linecap="round"/>
+
+            <!-- pescoço -->
+            <rect x="150" y="162" width="20" height="10" fill="#bde7d6"/>
+
+            <!-- corpo -->
+            <rect x="104" y="172" width="112" height="86" rx="22" fill="#ffffff"/>
+            <circle cx="160" cy="202" r="13" fill="#1fd49a"/>
+            <circle cx="160" cy="202" r="5"  fill="#0d4a3b"/>
+            <circle cx="140" cy="232" r="3.5" fill="#cfe9e0"/>
+            <circle cx="160" cy="232" r="3.5" fill="#cfe9e0"/>
+            <circle cx="180" cy="232" r="3.5" fill="#cfe9e0"/>
+
+            <!-- base -->
+            <rect x="128" y="256" width="64" height="22" rx="10" fill="#bde7d6"/>
+          </svg>
+        </div>
+      </section>
+
+      <!-- Lado do formulário -->
+      <section class="access">
+        <form class="login-form" autocomplete="on" onsubmit="return false;">
+          <h2>Login</h2>
+          <p class="form-sub">Acesse o SAAR CN</p>
+
+          <div class="field">
+            <label for="user">CPF</label>
+            <input type="text" id="user" name="user" placeholder="000.000.000-00" inputmode="numeric" maxlength="14" autocomplete="username" required>
+          </div>
+
+          <div class="field">
+            <label for="senha">Senha</label>
+            <div class="input-wrap">
+              <input type="password" id="senha" name="senha" class="has-toggle" placeholder="Digite sua senha" autocomplete="current-password" required>
+              <button type="button" class="toggle-pw" id="togglePw" aria-label="Mostrar senha" aria-pressed="false">
+                <svg id="eyeIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/>
+                  <circle cx="12" cy="12" r="3"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <div class="row-between">
+            <label class="remember">
+              <input type="checkbox" name="remember">
+              Lembrar de mim
+            </label>
+            <a href="RecuperarSenha.html" class="link">Esqueci minha senha</a>
+          </div>
+
+          <button type="submit" class="btn-entrar">Entrar</button>
+
+          <p class="first-access">
+            Primeiro acesso? <a href="#">Fale com a secretaria</a>
+          </p>
+        </form>
+      </section>
+
+    </div>
+  </main>
+
+<script>
+  // Mostrar / esconder senha
+  const toggle  = document.getElementById('togglePw');
+  const senha   = document.getElementById('senha');
+  const eyeIcon = document.getElementById('eyeIcon');
+
+  const eyeOpen   = '<path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/>';
+  const eyeClosed = '<path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c6.5 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"/><path d="M6.61 6.61A13.5 13.5 0 0 0 2 12s3.5 7 10 7a9.74 9.74 0 0 0 5.39-1.61"/><path d="M14.12 14.12a3 3 0 1 1-4.24-4.24"/><line x1="2" y1="2" x2="22" y2="22"/>';
+
+  toggle.addEventListener('click', () => {
+    const showing = senha.type === 'text';
+    senha.type = showing ? 'password' : 'text';
+    eyeIcon.innerHTML = showing ? eyeOpen : eyeClosed;
+    toggle.setAttribute('aria-pressed', String(!showing));
+    toggle.setAttribute('aria-label', showing ? 'Mostrar senha' : 'Esconder senha');
+  });
+
+  // Máscara de CPF no campo de usuário
+  const usuario = document.getElementById('user');
+  usuario.addEventListener('input', function () {
+    let v = this.value.replace(/\D/g, '').slice(0, 11);
+    v = v.replace(/(\d{3})(\d)/, '$1.$2').replace(/(\d{3})(\d)/, '$1.$2').replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+    this.value = v;
+  });
+
+  // Mensagem de erro embaixo do form
+  function mostrarErro(texto) {
+    let el = document.getElementById('loginErro');
+    if (!el) {
+      el = document.createElement('p');
+      el.id = 'loginErro';
+      el.style.cssText = 'color:#ff7a7a;font-size:.88rem;margin-top:12px;text-align:center;font-weight:600;';
+      document.querySelector('.btn-entrar').insertAdjacentElement('afterend', el);
+    }
+    el.textContent = texto;
+  }
+
+  // Login real (contra o backend)
+  const form = document.querySelector('.login-form');
+  const btn  = document.querySelector('.btn-entrar');
+
+  form.addEventListener('submit', async () => {
+    const cpf = usuario.value.trim();
+    const senhaDigitada = senha.value.trim();
+
+    if (!cpf || !senhaDigitada) { mostrarErro('Preencha CPF e senha.'); return; }
+
+    btn.disabled = true;
+    btn.textContent = 'Entrando...';
+    try {
+      const { token, usuario: user } = await api.login(cpf, senhaDigitada);
+      Auth.token = token;
+      Auth.usuario = user;
+      window.location.href = 'admin.html';
+    } catch (e) {
+      mostrarErro(e.message || 'CPF ou senha incorretos.');
+      btn.disabled = false;
+      btn.textContent = 'Entrar';
+    }
+  });
+</script>
+</body>
+</html>

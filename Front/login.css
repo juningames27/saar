@@ -1,0 +1,161 @@
+/* ===== Tema (mude as cores aqui) ===== */
+:root{
+  --teal-1:#10876a;   /* degradê: início  */
+  --teal-2:#0b5544;   /* degradê: meio    */
+  --teal-3:#063a2e;   /* degradê: fim / fundo */
+  --panel:#0f5b48;    /* painel do login  */
+  --mint:#1fd49a;     /* acento (botão/links) */
+  --mint-2:#16c389;   /* acento hover     */
+  --field:#ffffff;    /* fundo dos inputs */
+  --field-ink:#143b32;/* texto dos inputs */
+  --on-teal:#ffffff;
+  --on-teal-soft:rgba(255,255,255,.78);
+  --line-teal:rgba(255,255,255,.16);
+  --surface:#0b5544;  /* faixa de logos   */
+  --border:#084335;
+}
+
+*{ margin:0; padding:0; box-sizing:border-box; }
+
+body{
+  font-family:'Open Sans', Arial, sans-serif;
+  background:var(--teal-3);
+  color:var(--on-teal);
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  -webkit-font-smoothing:antialiased;
+}
+
+/* ===== Faixa superior com os logos ===== */
+.topbar{
+  background:var(--surface);
+  border-bottom:1px solid var(--border);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:16px;
+  flex-wrap:wrap;
+  padding:14px 32px;
+}
+.topbar-left,
+.topbar-right{ display:flex; align-items:center; gap:22px; }
+.logo-saar{ height:48px; width:auto; display:block; }
+.logo-org{ height:40px; width:auto; display:block; }
+
+/* ===== Login em tela cheia ===== */
+.login-shell{
+  flex:1 0 auto;
+  display:flex;
+  background:linear-gradient(135deg, var(--teal-1) 0%, var(--teal-2) 48%, var(--teal-3) 100%);
+}
+.card{
+  flex:1;
+  display:grid;
+  grid-template-columns:1.08fr 1fr;
+}
+
+/* ----- Lado da marca ----- */
+.welcome{
+  color:var(--on-teal);
+  padding:48px 56px;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:flex-start;
+  gap:26px;
+}
+.welcome h1{ font-size:3rem; font-weight:800; letter-spacing:-.01em; line-height:1; }
+.welcome p{ font-size:1.05rem; line-height:1.5; color:var(--on-teal-soft); max-width:340px; }
+.welcome-art{ width:100%; max-width:300px; align-self:center; }
+.welcome-art svg{ width:100%; height:auto; display:block; }
+
+/* ----- Painel do formulário ----- */
+.access{
+  background:var(--panel);
+  border-radius:28px 0 0 28px;
+  box-shadow:-24px 0 60px -34px rgba(0,0,0,.55);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:48px;
+}
+.login-form{ width:100%; max-width:330px; margin:0 auto; }
+.login-form h2{ font-size:1.7rem; font-weight:800; color:var(--on-teal); }
+.form-sub{ margin-top:6px; margin-bottom:28px; color:var(--on-teal-soft); font-size:.95rem; }
+
+.field{ margin-bottom:18px; }
+.field label{ display:block; font-size:.88rem; font-weight:700; margin-bottom:7px; color:var(--on-teal); }
+.input-wrap{ position:relative; }
+.field input{
+  width:100%;
+  font-family:inherit;
+  font-size:.97rem;
+  color:var(--field-ink);
+  padding:12px 14px;
+  background:var(--field);
+  border:1px solid transparent;
+  border-radius:8px;
+  transition:box-shadow .15s, border-color .15s;
+}
+.field input::placeholder{ color:#9aa6b4; }
+.field input:focus{
+  outline:none;
+  border-color:var(--mint);
+  box-shadow:0 0 0 3px rgba(31,212,154,.28);
+}
+.input-wrap input.has-toggle{ padding-right:44px; }
+
+.toggle-pw{
+  position:absolute; top:50%; right:6px; transform:translateY(-50%);
+  width:34px; height:34px; border:none; background:transparent; color:#5f6c7b;
+  cursor:pointer; border-radius:7px; display:grid; place-items:center;
+  transition:color .15s, background .15s;
+}
+.toggle-pw:hover{ color:var(--field-ink); background:rgba(0,0,0,.06); }
+.toggle-pw svg{ width:20px; height:20px; }
+
+.row-between{ display:flex; align-items:center; justify-content:space-between; gap:12px; margin:4px 0 22px; }
+.remember{ display:flex; align-items:center; gap:8px; font-size:.88rem; color:var(--on-teal-soft); cursor:pointer; user-select:none; }
+.remember input{
+  appearance:none; -webkit-appearance:none; width:17px; height:17px;
+  border:1.5px solid var(--line-teal); border-radius:4px; background:rgba(255,255,255,.12);
+  cursor:pointer; position:relative; transition:all .15s; flex-shrink:0;
+}
+.remember input:checked{ background:var(--mint); border-color:var(--mint); }
+.remember input:checked::after{
+  content:""; position:absolute; left:5px; top:1.5px; width:4px; height:8px;
+  border:solid var(--teal-3); border-width:0 2px 2px 0; transform:rotate(45deg);
+}
+.link{ color:var(--mint); font-size:.88rem; font-weight:700; text-decoration:none; }
+.link:hover{ text-decoration:underline; text-underline-offset:3px; }
+
+.btn-entrar{
+  width:100%; font-family:inherit; font-size:1rem; font-weight:800;
+  color:var(--teal-3); padding:13px; border:none; border-radius:8px;
+  background:var(--mint); cursor:pointer;
+  transition:background .15s, transform .12s, box-shadow .15s;
+}
+.btn-entrar:hover{ background:var(--mint-2); box-shadow:0 10px 22px -10px rgba(31,212,154,.65); }
+.btn-entrar:active{ transform:translateY(1px); }
+
+.first-access{ margin-top:22px; text-align:center; font-size:.9rem; color:var(--on-teal-soft); }
+.first-access a{ color:var(--mint); font-weight:700; text-decoration:none; }
+.first-access a:hover{ text-decoration:underline; text-underline-offset:3px; }
+
+/* ===== Responsivo ===== */
+@media (max-width:860px){
+  .card{ grid-template-columns:1fr; }
+  .welcome{ padding:34px 30px; gap:18px; align-items:center; text-align:center; }
+  .welcome p{ max-width:none; }
+  .welcome-art{ display:none; }
+  .access{ border-radius:0; padding:34px 26px; box-shadow:none; }
+}
+@media (max-width:480px){
+  .topbar{ padding:12px 18px; gap:12px; }
+  .topbar-left,
+  .topbar-right{ gap:14px; }
+  .logo-saar{ height:38px; }
+  .logo-org{ height:32px; }
+  .welcome h1{ font-size:2.4rem; }
+}

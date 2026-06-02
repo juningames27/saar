@@ -1,0 +1,924 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Console SAAR — Administrador</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500&family=Open+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="Admin.css">
+</head>
+<body>
+  <div class="shell">
+
+    <!-- ===== Menu lateral ===== -->
+    <aside class="sidebar" id="sidebar">
+      <div class="side-brand">
+        <div class="mark">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="5" y="5" width="14" height="14" rx="2"/>
+            <rect x="9" y="9" width="6" height="6" rx="1"/>
+            <path d="M9 2v3M15 2v3M9 19v3M15 19v3M2 9h3M2 15h3M19 9h3M19 15h3"/>
+          </svg>
+        </div>
+        <div class="bn">SAAR <span>Console Admin</span></div>
+      </div>
+
+      <div class="side-divider"></div>
+      <div class="side-label">Menu</div>
+
+      <nav class="side-nav">
+        <button class="side-item active" data-panel="inicio">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+            <polyline points="9 22 9 12 15 12 15 22"/>
+          </svg>
+          Início
+        </button>
+
+        <button class="side-item has-sub" data-panel="ensino" id="btnEnsino">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+          </svg>
+          Ensino
+        </button>
+
+        <div class="sub-nav" id="subEnsino">
+          <button class="sub-item" data-sub="materiais">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+              <polyline points="14 2 14 8 20 8"/>
+            </svg>
+            Materiais
+          </button>
+
+          <button class="sub-item" data-sub="horario">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="4" width="18" height="18" rx="2"/>
+              <line x1="16" y1="2" x2="16" y2="6"/>
+              <line x1="8" y1="2" x2="8" y2="6"/>
+              <line x1="3" y1="10" x2="21" y2="10"/>
+            </svg>
+            Horário
+          </button>
+          <button class="sub-item" data-sub="chamada">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
+            </svg>
+            Chamada
+          </button>
+        </div>
+
+        <button class="side-item has-sub" data-panel="alunos" id="btnAlunos">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+            <circle cx="9" cy="7" r="4"/>
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+            <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+          </svg>
+          Alunos
+          <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-left:auto;width:15px;height:15px;transition:transform .2s"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="sub-nav" id="subAlunos">
+          <button class="sub-item" data-sub="cadastrar-aluno">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg>
+            Cadastrar aluno
+          </button>
+          <button class="sub-item" data-sub="carometro">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+            Carômetro
+          </button>
+        </div>
+
+        <button class="side-item" data-panel="projetos">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
+          </svg>
+          Projetos
+        </button>
+
+        <button class="side-item" data-panel="comunicacao">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+          </svg>
+          Comunicação
+        </button>
+
+        <button class="side-item" data-panel="administradores">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+          </svg>
+          Administradores
+        </button>
+      </nav>
+
+      <div class="side-foot">
+        <a href="Login.html" class="side-item danger">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+            <polyline points="16 17 21 12 16 7"/>
+            <line x1="21" y1="12" x2="9" y2="12"/>
+          </svg>
+          Sair
+        </a>
+      </div>
+    </aside>
+
+    <div class="overlay" id="overlay"></div>
+
+    <!-- ===== Área principal ===== -->
+    <div class="main">
+
+      <header class="topbar">
+        <div class="topbar-left">
+          <button class="menu-toggle" id="menuToggle" aria-label="Abrir menu">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="3" y1="6" x2="21" y2="6"/>
+              <line x1="3" y1="12" x2="21" y2="12"/>
+              <line x1="3" y1="18" x2="21" y2="18"/>
+            </svg>
+          </button>
+
+          <div class="logos">
+            <span class="logo-chip"><img src="NTE.png" alt="NTE"></span>
+            <span class="logo-chip"><img src="SEMED.png" alt="SEMED"></span>
+          </div>
+        </div>
+
+        <div class="admin">
+          <div class="who">
+            <b id="topName">Wendel</b>
+            <span>Administrador</span>
+          </div>
+          <div class="ava">W</div>
+        </div>
+      </header>
+
+      <main class="content">
+        <div class="inner">
+
+          <!-- ===== INÍCIO ===== -->
+          <section class="panel active" id="inicio">
+            <div class="profile">
+              <div class="cover"></div>
+
+              <div class="avatar-wrap">
+                <div class="avatar" id="avatar">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                    <circle cx="12" cy="7" r="4"/>
+                  </svg>
+                </div>
+
+                <button class="avatar-edit" id="avatarEdit" title="Alterar foto de perfil" aria-label="Alterar foto de perfil">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+                    <circle cx="12" cy="13" r="4"/>
+                  </svg>
+                </button>
+
+                <input type="file" id="avatarInput" accept="image/*" hidden>
+              </div>
+
+              <div class="profile-body">
+                <div class="p-name" id="profName">Wendel</div>
+                <div class="p-role">Administrador</div>
+
+                <button class="btn-outline" id="btnEditarSenha">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="11" width="18" height="11" rx="2"/>
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                  </svg>
+                  Editar senha
+                </button>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-head">
+                <div class="ic">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="8" r="4"/>
+                    <path d="M4 21v-1a6 6 0 0 1 6-6h4a6 6 0 0 1 6 6v1"/>
+                  </svg>
+                </div>
+                <div>
+                  <h2>Dados gerais</h2>
+                  <p>Informações da sua conta de administrador.</p>
+                </div>
+              </div>
+
+              <form id="formPerfil" onsubmit="return false;" autocomplete="off">
+                <div class="form-grid">
+                  <div class="field full">
+                    <label for="pf-nome">Nome completo</label>
+                    <input type="text" id="pf-nome" placeholder="Seu nome completo">
+                  </div>
+
+                  <div class="field">
+                    <label for="pf-email">E-mail</label>
+                    <input type="email" id="pf-email" placeholder="email@exemplo.com">
+                  </div>
+
+                  <div class="field">
+                    <label for="pf-tel">Telefone</label>
+                    <input type="text" id="pf-tel" placeholder="(99) 90000-0000">
+                  </div>
+
+                  <div class="field">
+                    <label for="pf-nivel">Nível de acesso</label>
+                    <input type="text" id="pf-nivel" value="Administrador" readonly>
+                  </div>
+                </div>
+
+                <div class="form-actions">
+                  <button type="submit" class="btn btn-primary">Salvar alterações</button>
+                </div>
+
+                <div class="form-msg" id="msgPerfil"></div>
+              </form>
+            </div>
+          </section>
+
+          <!-- ===== MATERIAIS ===== -->
+          <section class="panel" id="materiais">
+            <div class="page-header">
+              <div>
+                <h1 class="page-title">Materiais</h1>
+                <p class="page-sub">Gerencie os materiais de ensino disponíveis.</p>
+              </div>
+
+              <button class="btn btn-primary" id="btnNovoMaterial">
+                Novo material
+              </button>
+            </div>
+
+            <div class="card" id="formMaterialWrap" style="display:none;margin-bottom:20px;">
+              <div class="card-head">
+                <div class="ic">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                    <polyline points="14 2 14 8 20 8"/>
+                  </svg>
+                </div>
+                <div>
+                  <h2>Enviar material</h2>
+                  <p>Preencha as informações e anexe o arquivo.</p>
+                </div>
+              </div>
+
+              <form id="formMaterial" onsubmit="return false;" autocomplete="off">
+                <div class="form-grid">
+                  <div class="field full">
+                    <label for="mat-nome">Nome do material</label>
+                    <input type="text" id="mat-nome" placeholder="Ex.: Apostila de Matemática — 3º Ano">
+                  </div>
+
+                  <div class="field full">
+                    <label for="mat-desc">Descrição</label>
+                    <textarea id="mat-desc" placeholder="Descreva brevemente o conteúdo do material..." rows="3"></textarea>
+                  </div>
+
+                  <div class="field">
+                    <label for="mat-turma">Turma / Disciplina</label>
+                    <input type="text" id="mat-turma" placeholder="Ex.: 3º Ano A — Matemática">
+                  </div>
+
+                  <div class="field">
+                    <label for="mat-tipo">Tipo</label>
+                    <select id="mat-tipo">
+                      <option value="">Selecione…</option>
+                      <option>Apostila</option>
+                      <option>Exercício</option>
+                      <option>Prova</option>
+                      <option>Slide</option>
+                      <option>Outro</option>
+                    </select>
+                  </div>
+
+                  <div class="field full">
+                    <label>Arquivo</label>
+                    <div class="file-drop" id="fileDrop">
+                      <input type="file" id="mat-arquivo" accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.zip,.png,.jpg" hidden>
+
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                        <polyline points="17 8 12 3 7 8"/>
+                        <line x1="12" y1="3" x2="12" y2="15"/>
+                      </svg>
+
+                      <p id="fileLabel">Arraste um arquivo ou <span>clique para selecionar</span></p>
+                      <small>PDF, Word, PowerPoint, Excel, imagens — até 50 MB</small>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="form-actions">
+                  <button type="submit" class="btn btn-primary">Enviar material</button>
+                  <button type="button" class="btn btn-ghost" id="btnCancelarMaterial">Cancelar</button>
+                </div>
+
+                <div class="form-msg" id="msgMaterial"></div>
+              </form>
+            </div>
+
+            <div class="card">
+              <div class="list-toolbar">
+                <div class="search-wrap">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="11" cy="11" r="8"/>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                  </svg>
+                  <input type="text" id="buscaMaterial" placeholder="Buscar material…">
+                </div>
+              </div>
+
+              <table class="mat-table" id="tabelaMateriais">
+                <thead>
+                  <tr>
+                    <th>Nome</th>
+                    <th>Turma / Disciplina</th>
+                    <th>Tipo</th>
+                    <th>Data</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody id="matBody"></tbody>
+              </table>
+
+              <p class="list-empty" id="matEmpty" style="display:none;">Nenhum material encontrado.</p>
+            </div>
+          </section>
+          <!-- ===== HORÁRIO ===== -->
+          <section class="panel" id="horario">
+            <div class="page-header">
+              <div>
+                <h1 class="page-title">Horário</h1>
+                <p class="page-sub">Escolha o mês. Clique em qualquer célula para editar.</p>
+              </div>
+
+              <div class="hor-actions">
+                <button class="btn btn-ghost" id="btnResetHorario">
+                  Resetar
+                </button>
+
+                <button class="btn btn-primary" id="btnSalvarHorario">
+                  Salvar
+                </button>
+              </div>
+            </div>
+
+            <div class="hor-controls">
+              <div class="field">
+                <label for="horMes">Mês</label>
+                <select id="horMes">
+                  <option value="0">Janeiro</option>
+                  <option value="1">Fevereiro</option>
+                  <option value="2">Março</option>
+                  <option value="3">Abril</option>
+                  <option value="4">Maio</option>
+                  <option value="5">Junho</option>
+                  <option value="6">Julho</option>
+                  <option value="7">Agosto</option>
+                  <option value="8">Setembro</option>
+                  <option value="9">Outubro</option>
+                  <option value="10">Novembro</option>
+                  <option value="11">Dezembro</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="card" style="padding:0;overflow:hidden;">
+              <div class="hor-scroll">
+                <table class="hor-table" id="tabelaHorario">
+                  <thead>
+                    <tr>
+                      <th class="hor-th-turno">Turno</th>
+                      <th class="hor-th-periodo">Período</th>
+                      <th class="hor-th-horario">Horário</th>
+                      <th>Segunda</th>
+                      <th>Terça</th>
+                      <th>Quarta</th>
+                      <th>Quinta</th>
+                      <th>Sexta</th>
+                    </tr>
+                  </thead>
+
+                  <tbody id="horBody"></tbody>
+                </table>
+              </div>
+            </div>
+
+            <div class="form-msg" id="msgHorario" style="margin-top:12px;"></div>
+          </section>
+
+          <!-- ===== CADASTRAR ALUNO ===== -->
+          <section class="panel" id="cadastrar-aluno">
+            <div class="page-header">
+              <div>
+                <h1 class="page-title">Cadastrar Aluno</h1>
+                <p class="page-sub">Preencha os dados para registrar um novo aluno no sistema.</p>
+              </div>
+            </div>
+
+            <form id="formAluno" onsubmit="return false;" autocomplete="off">
+              <!-- Foto + nome em destaque -->
+              <div class="aluno-hero card">
+                <div class="aluno-foto-wrap">
+                  <div class="aluno-foto" id="alunoFotoPreview">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                  </div>
+                  <button type="button" class="aluno-foto-btn" id="btnFotoAluno" title="Adicionar foto">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+                  </button>
+                  <input type="file" id="alunoFotoInput" accept="image/*" hidden>
+                  <p class="aluno-foto-hint">Foto do aluno</p>
+                </div>
+                <div class="aluno-hero-fields">
+                  <div class="field">
+                    <label for="al-nome">Nome completo</label>
+                    <input type="text" id="al-nome" placeholder="Ex.: João Pedro Souza">
+                  </div>
+                  <div class="aluno-row2">
+                    <div class="field">
+                      <label for="al-turma">Turma</label>
+                      <select id="al-turma">
+                        <option value="">Selecione a turma…</option>
+                        <option value="1">Turma 1</option>
+                        <option value="2">Turma 2</option>
+                        <option value="3">Turma 3</option>
+                        <option value="4">Turma 4</option>
+                        <option value="5">Turma 5</option>
+                        <option value="6">Turma 6</option>
+                      </select>
+                    </div>
+                    <div class="field">
+                      <label for="al-nasc">Data de nascimento</label>
+                      <input type="date" id="al-nasc">
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Dados de contato -->
+              <div class="card" style="margin-top:16px;">
+                <div class="card-head">
+                  <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></div>
+                  <div><h2>Contato</h2><p>Informações de contato do aluno.</p></div>
+                </div>
+                <div class="form-grid">
+                  <div class="field">
+                    <label for="al-email">E-mail</label>
+                    <input type="email" id="al-email" placeholder="email@exemplo.com">
+                  </div>
+                  <div class="field">
+                    <label for="al-tel">Telefone</label>
+                    <input type="text" id="al-tel" placeholder="(99) 9 0000-0000" maxlength="16">
+                  </div>
+                </div>
+              </div>
+
+              <!-- Documento -->
+              <div class="card" style="margin-top:16px;">
+                <div class="card-head">
+                  <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg></div>
+                  <div><h2>Documento</h2><p>CPF do aluno para identificação.</p></div>
+                </div>
+                <div class="form-grid">
+                  <div class="field">
+                    <label for="al-cpf">CPF</label>
+                    <input type="text" id="al-cpf" placeholder="000.000.000-00" maxlength="14">
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-actions" style="margin-top:20px;">
+                <button type="submit" class="btn btn-primary">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                  Cadastrar aluno
+                </button>
+                <button type="reset" class="btn btn-ghost">Limpar</button>
+              </div>
+              <div class="form-msg" id="msgAluno"></div>
+            </form>
+          </section>
+
+          <!-- ===== CARÔMETRO ===== -->
+          <section class="panel" id="carometro">
+            <div class="page-header">
+              <div>
+                <h1 class="page-title">Carômetro</h1>
+                <p class="page-sub">Selecione uma turma para ver os alunos.</p>
+              </div>
+            </div>
+
+            <!-- Abas de turma -->
+            <div class="caro-tabs" id="caroTabs">
+              <button class="caro-tab active" data-turma="0">Todas</button>
+              <button class="caro-tab" data-turma="1">Turma 1</button>
+              <button class="caro-tab" data-turma="2">Turma 2</button>
+              <button class="caro-tab" data-turma="3">Turma 3</button>
+              <button class="caro-tab" data-turma="4">Turma 4</button>
+              <button class="caro-tab" data-turma="5">Turma 5</button>
+              <button class="caro-tab" data-turma="6">Turma 6</button>
+            </div>
+
+            <!-- Contagem -->
+            <p class="caro-count" id="caroCount"></p>
+
+            <!-- Grid de alunos -->
+            <div id="caroGrid" class="caro-grid"></div>
+
+            <!-- Estado vazio -->
+            <div class="empty" id="caroEmpty" style="display:none;">
+              <div class="eic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div>
+              <h2>Nenhum aluno nesta turma</h2>
+              <p>Cadastre alunos na aba "Cadastrar aluno" para vê-los aqui.</p>
+            </div>
+          </section>
+
+          <!-- ===== MODAL ALUNO ===== -->
+          <div class="modal" id="modalAluno">
+            <div class="modal-aluno-card card">
+
+              <!-- Cabeçalho do modal -->
+              <div class="modal-aluno-header">
+                <div class="modal-aluno-foto-wrap">
+                  <div class="modal-aluno-foto" id="maFoto"></div>
+                  <button type="button" class="aluno-foto-btn" id="maBtnFoto" title="Alterar foto">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+                  </button>
+                  <input type="file" id="maFotoInput" accept="image/*" hidden>
+                </div>
+                <div class="modal-aluno-id">
+                  <p class="modal-aluno-turma" id="maTurmaLabel"></p>
+                  <h2 class="modal-aluno-nome" id="maNome"></h2>
+                </div>
+                <button class="modal-close" id="modalAlunoClose" aria-label="Fechar">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                </button>
+              </div>
+
+              <!-- Formulário de edição -->
+              <form id="formEditAluno" onsubmit="return false;" autocomplete="off">
+                <input type="hidden" id="maId">
+                <div class="form-grid" style="margin-top:4px;">
+                  <div class="field full"><label>Nome completo</label><input type="text" id="maEditNome" placeholder="Nome completo"></div>
+                  <div class="field"><label>Data de nascimento</label><input type="date" id="maEditNasc"></div>
+                  <div class="field"><label>Turma</label>
+                    <select id="maEditTurma">
+                      <option value="1">Turma 1</option><option value="2">Turma 2</option>
+                      <option value="3">Turma 3</option><option value="4">Turma 4</option>
+                      <option value="5">Turma 5</option><option value="6">Turma 6</option>
+                    </select>
+                  </div>
+                  <div class="field"><label>E-mail</label><input type="email" id="maEditEmail" placeholder="email@exemplo.com"></div>
+                  <div class="field"><label>Telefone</label><input type="text" id="maEditTel" placeholder="(99) 9 0000-0000" maxlength="16"></div>
+                  <div class="field"><label>CPF</label><input type="text" id="maEditCpf" placeholder="000.000.000-00" maxlength="14"></div>
+                </div>
+
+                <!-- Avaliação por estrelas -->
+                <div class="estrelas-wrap">
+                  <label class="estrelas-label">Avaliação</label>
+                  <div class="estrelas-grid" id="maEstrelasGrid"></div>
+                  <p class="estrelas-contador" id="maEstrelasCount">0 estrelas</p>
+                </div>
+
+                <div class="form-actions" style="margin-top:18px;">
+                  <button type="submit" class="btn btn-primary">Salvar alterações</button>
+                  <button type="button" class="btn btn-ghost" id="maBtnExcluir" style="color:var(--danger);border-color:var(--danger);">Excluir aluno</button>
+                </div>
+                <div class="form-msg" id="msgEditAluno"></div>
+              </form>
+            </div>
+          </div>
+
+          <!-- ===== CHAMADA ===== -->
+          <section class="panel" id="chamada">
+            <div class="page-header">
+              <div>
+                <h1 class="page-title">Chamada</h1>
+                <p class="page-sub">Registre a frequência dos alunos por turma e data.</p>
+              </div>
+              <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                <button class="btn btn-ghost" id="btnVerHistorico">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                  Histórico
+                </button>
+                <button class="btn btn-primary" id="btnSalvarChamada" style="display:none;">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+                  Salvar chamada
+                </button>
+              </div>
+            </div>
+
+            <!-- Seleção de turma + data -->
+            <div class="card" id="chamadaSetup">
+              <div class="chamada-setup-grid">
+                <div class="field">
+                  <label for="chamadaTurma">Turma</label>
+                  <select id="chamadaTurma">
+                    <option value="">Selecione a turma…</option>
+                    <option value="1">Turma 1</option>
+                    <option value="2">Turma 2</option>
+                    <option value="3">Turma 3</option>
+                    <option value="4">Turma 4</option>
+                    <option value="5">Turma 5</option>
+                    <option value="6">Turma 6</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label for="chamadaData">Data</label>
+                  <input type="date" id="chamadaData">
+                </div>
+                <div class="chamada-setup-btn">
+                  <button class="btn btn-primary" id="btnAbrirChamada">Abrir chamada</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Lista de alunos -->
+            <div id="chamadaLista" style="display:none;">
+              <!-- cabeçalho gerado por JS -->
+              <div class="chamada-cabecalho" id="chamadaCabecalho"></div>
+              <!-- tabela de alunos -->
+              <div class="card" style="padding:0;overflow:hidden;">
+                <table class="chamada-table">
+                  <thead>
+                    <tr>
+                      <th style="text-align:left;padding-left:20px;">Aluno</th>
+                      <th style="width:120px;">Frequência</th>
+                    </tr>
+                  </thead>
+                  <tbody id="chamadaBody"></tbody>
+                </table>
+              </div>
+              <div class="chamada-resumo" id="chamadaResumo"></div>
+              <div class="form-msg" id="msgChamada" style="margin-top:12px;"></div>
+            </div>
+
+            <!-- Histórico (oculto por padrão) -->
+            <div id="chamadaHistorico" style="display:none;">
+              <div class="page-header" style="margin-top:20px;">
+                <h2 style="font-size:1rem;font-weight:700;">Histórico de chamadas</h2>
+                <button class="btn btn-ghost" id="btnFecharHistorico">Fechar</button>
+              </div>
+              <div class="card" style="padding:0;overflow:hidden;">
+                <table class="chamada-table" id="historicoTable">
+                  <thead>
+                    <tr>
+                      <th style="text-align:left;padding-left:20px;">Data</th>
+                      <th>Turma</th>
+                      <th>Presentes</th>
+                      <th>Faltas</th>
+                      <th style="width:80px;"></th>
+                    </tr>
+                  </thead>
+                  <tbody id="historicoBody"></tbody>
+                </table>
+              </div>
+              <p class="list-empty" id="historicoEmpty" style="display:none;">Nenhuma chamada registrada ainda.</p>
+            </div>
+          </section>
+
+          <!-- ===== PROJETOS ===== -->
+          <section class="panel" id="projetos">
+            <div class="empty">
+              <div class="eic">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
+                </svg>
+              </div>
+              <h2>Projetos</h2>
+              <p>Em construção — defina aqui o que essa área vai mostrar.</p>
+            </div>
+          </section>
+
+          <!-- ===== COMUNICAÇÃO ===== -->
+          <section class="panel" id="comunicacao">
+            <div class="empty">
+              <div class="eic">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                </svg>
+              </div>
+              <h2>Comunicação</h2>
+              <p>Em construção — avisos e mensagens podem aparecer aqui.</p>
+            </div>
+          </section>
+
+          <!-- ===== ADMINISTRADORES ===== -->
+          <section class="panel" id="administradores">
+            <div class="page-header">
+              <div>
+                <h1 class="page-title">Administradores</h1>
+                <p class="page-sub">Gerencie os administradores do sistema.</p>
+              </div>
+              <button class="btn btn-primary" id="btnNovoAdm">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                Novo administrador
+              </button>
+            </div>
+
+            <!-- Legenda de níveis -->
+            <div class="adm-niveis-info">
+              <div class="adm-nivel-chip master">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                ADM Master — adiciona/remove admins + todas as funções
+              </div>
+              <div class="adm-nivel-chip adm">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a6 6 0 0 1 6-6h4a6 6 0 0 1 6 6v1"/></svg>
+                Administrador — cadastra alunos + todas as funções
+              </div>
+            </div>
+
+            <!-- Formulário (oculto por padrão) -->
+            <div class="card" id="formAdmWrap" style="display:none; margin-bottom:20px;">
+              <div class="card-head">
+                <div class="ic">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                </div>
+                <div><h2 id="formAdmTitulo">Novo administrador</h2><p>Preencha os dados e defina o nível de acesso.</p></div>
+              </div>
+              <form id="formAdm" onsubmit="return false;" autocomplete="off">
+                <input type="hidden" id="adm-id">
+                <div class="form-grid">
+                  <div class="field full">
+                    <label for="adm-nome">Nome completo</label>
+                    <input type="text" id="adm-nome" placeholder="Nome completo">
+                  </div>
+                  <div class="field">
+                    <label for="adm-email">E-mail</label>
+                    <input type="email" id="adm-email" placeholder="email@exemplo.com">
+                  </div>
+                  <div class="field">
+                    <label for="adm-tel">Telefone</label>
+                    <input type="text" id="adm-tel" placeholder="(99) 9 0000-0000" maxlength="16">
+                  </div>
+                  <div class="field">
+                    <label for="adm-cpf">CPF</label>
+                    <input type="text" id="adm-cpf" placeholder="000.000.000-00" maxlength="14">
+                  </div>
+                  <div class="field">
+                    <label for="adm-nasc">Data de nascimento</label>
+                    <input type="date" id="adm-nasc">
+                  </div>
+                  <div class="field full">
+                    <label>Nível de acesso</label>
+                    <div class="adm-nivel-opts" id="admNivelOpts">
+                      <label class="adm-radio">
+                        <input type="radio" name="admNivel" value="master">
+                        <span class="adm-radio-box">
+                          <span class="adm-radio-dot"></span>
+                          <span class="adm-radio-info">
+                            <strong>ADM Master</strong>
+                            <small>Adiciona e remove admins · acesso total</small>
+                          </span>
+                          <span class="adm-nivel-tag master">Master</span>
+                        </span>
+                      </label>
+                      <label class="adm-radio">
+                        <input type="radio" name="admNivel" value="adm" checked>
+                        <span class="adm-radio-box">
+                          <span class="adm-radio-dot"></span>
+                          <span class="adm-radio-info">
+                            <strong>Administrador</strong>
+                            <small>Cadastra alunos · todas as funções do sistema</small>
+                          </span>
+                          <span class="adm-nivel-tag adm">Adm</span>
+                        </span>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+                <div class="form-actions" style="margin-top:20px;">
+                  <button type="submit" class="btn btn-primary" id="admBtnSalvar">Cadastrar</button>
+                  <button type="button" class="btn btn-ghost" id="btnCancelarAdm">Cancelar</button>
+                </div>
+                <div class="form-msg" id="msgAdm"></div>
+              </form>
+            </div>
+
+            <!-- Lista de administradores -->
+            <div class="card" style="padding:0;overflow:hidden;">
+              <div class="list-toolbar" style="padding:14px 20px 0;">
+                <div class="search-wrap">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                  <input type="text" id="buscaAdm" placeholder="Buscar administrador…">
+                </div>
+              </div>
+              <table class="mat-table" id="tabelaAdm" style="margin-top:8px;">
+                <thead>
+                  <tr>
+                    <th>Nome</th>
+                    <th>E-mail</th>
+                    <th>Telefone</th>
+                    <th>Nível</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody id="admBody"></tbody>
+              </table>
+              <p class="list-empty" id="admEmpty" style="display:none;">Nenhum administrador cadastrado ainda.</p>
+            </div>
+          </section>
+
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- ===== Modal: editar senha ===== -->
+  <div class="modal" id="modalSenha">
+    <div class="card modal-card">
+      <button class="modal-close" id="modalClose" aria-label="Fechar">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"/>
+          <line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
+
+      <div class="card-head">
+        <div class="ic">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="11" width="18" height="11" rx="2"/>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+          </svg>
+        </div>
+        <div>
+          <h2>Editar senha</h2>
+          <p>Atualize a senha da sua conta.</p>
+        </div>
+      </div>
+
+      <form id="formSenha" onsubmit="return false;" autocomplete="off">
+        <div class="field" style="margin-bottom:16px;">
+          <label for="pw-atual">Senha atual</label>
+          <div class="input-wrap">
+            <input type="password" id="pw-atual" class="has-toggle" placeholder="Digite a senha atual" required>
+            <button type="button" class="toggle-pw" data-target="pw-atual" aria-label="Mostrar senha">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/>
+                <circle cx="12" cy="12" r="3"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <div class="field" style="margin-bottom:16px;">
+          <label for="pw-nova">Nova senha</label>
+          <div class="input-wrap">
+            <input type="password" id="pw-nova" class="has-toggle" placeholder="Digite a nova senha" required>
+            <button type="button" class="toggle-pw" data-target="pw-nova" aria-label="Mostrar senha">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/>
+                <circle cx="12" cy="12" r="3"/>
+              </svg>
+            </button>
+          </div>
+          <p class="hint">Use pelo menos 6 caracteres.</p>
+        </div>
+
+        <div class="field">
+          <label for="pw-conf">Confirmar nova senha</label>
+          <div class="input-wrap">
+            <input type="password" id="pw-conf" class="has-toggle" placeholder="Repita a nova senha" required>
+            <button type="button" class="toggle-pw" data-target="pw-conf" aria-label="Mostrar senha">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/>
+                <circle cx="12" cy="12" r="3"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary">Salvar nova senha</button>
+          <button type="button" class="btn btn-ghost" id="modalCancel">Cancelar</button>
+        </div>
+
+        <div class="form-msg" id="msgSenha"></div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Toast global -->
+  <div id="toastWrap" aria-live="polite"></div>
+  <!-- Modal de confirmação -->
+  <div class="modal" id="modalConfirm">
+    <div class="confirm-card">
+      <p class="confirm-msg" id="confirmMsg"></p>
+      <div class="confirm-actions">
+        <button class="btn btn-primary" id="confirmOk">Confirmar</button>
+        <button class="btn btn-ghost"   id="confirmCancel">Cancelar</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="Admin.js"></script>
+</body>
+</html>
