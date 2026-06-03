@@ -1,1 +1,1 @@
-window.SAAR_API = "https://saar-ryqd.onrender.com;
+window.SAAR_API = "https://saar-ryqd.onrender.com"; 
