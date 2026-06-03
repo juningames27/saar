@@ -44,6 +44,9 @@ const api = {
   // Autenticação
   login: (cpf, senha) => apiFetch("/api/login", { method: "POST", body: JSON.stringify({ cpf, senha }) }),
 
+  // Perfil próprio
+  me: { ler: () => api.get("/api/me"), salvar: (b) => api.put("/api/me", b) },
+
   // Atalhos de domínio
   admins:    { listar: () => api.get("/api/admins"), criar: (b) => api.post("/api/admins", b), editar: (id, b) => api.put("/api/admins/" + id, b), remover: (id) => api.del("/api/admins/" + id) },
   alunos:    { listar: () => api.get("/api/alunos"), criar: (b) => api.post("/api/alunos", b), editar: (id, b) => api.put("/api/alunos/" + id, b), remover: (id) => api.del("/api/alunos/" + id) },

@@ -2,6 +2,10 @@
 if (!window.Auth || !Auth.token) {
   window.location.href = 'Login.html';
 }
+// Aluno não acessa o painel de admin → vai pra página dele
+if (window.Auth && Auth.usuario && Auth.usuario.nivel === 'aluno') {
+  window.location.href = 'aluno.html';
+}
 
 /* ===== Helpers ===== */
 function lerArquivoBase64(file) {
@@ -130,6 +134,7 @@ function openPanel(id) {
   closeMenu();
   window.scrollTo({ top: 0, behavior: 'smooth' });
   if (id === 'materiais')       carregarMateriais();
+  if (id === 'horario')         carregarHorario();
   if (id === 'carometro')       carregarAlunos();
   if (id === 'chamada')         carregarAlunos();
   if (id === 'administradores') carregarAdmins();
@@ -203,14 +208,46 @@ avatarInput.addEventListener('change', () => {
   document.getElementById('avatar').innerHTML = '<img src="' + URL.createObjectURL(file) + '" alt="Foto de perfil">';
 });
 
-/* ===== Salvar perfil ===== */
-document.getElementById('formPerfil').addEventListener('submit', () => {
-  const nome = document.getElementById('pf-nome').value.trim();
-  if (nome) {
-    document.getElementById('profName').textContent = nome;
-    document.getElementById('topName').textContent  = nome.split(' ')[0];
-  }
-  msg(document.getElementById('msgPerfil'), 'Perfil pronto para envio. Conecte ao backend para salvar.', 'info');
+/* ===== Perfil (Início) — carrega e salva no banco ===== */
+const nivelLabelMap = { master: 'Administrador Master', adm: 'Administrador', aluno: 'Aluno' };
+
+async function carregarPerfil() {
+  try {
+    const u = await api.me.ler();
+    document.getElementById('pf-nome').value  = u.nome || '';
+    document.getElementById('pf-email').value = u.email || '';
+    document.getElementById('pf-tel').value   = u.telefone || '';
+    const nivelEl = document.getElementById('pf-nivel');
+    if (nivelEl) nivelEl.value = nivelLabelMap[u.nivel] || 'Administrador';
+  } catch (e) { /* silencioso */ }
+}
+carregarPerfil();
+
+document.getElementById('pf-tel').addEventListener('input', function() {
+  let v = this.value.replace(/\D/g,'').slice(0,11);
+  if (v.length > 10) v = v.replace(/^(\d{2})(\d{5})(\d{4}).*/,'($1) $2-$3');
+  else if (v.length > 6) v = v.replace(/^(\d{2})(\d{4})(\d*)/,'($1) $2-$3');
+  else if (v.length > 2) v = v.replace(/^(\d{2})(\d*)/,'($1) $2');
+  this.value = v;
+});
+
+document.getElementById('formPerfil').addEventListener('submit', async () => {
+  const nome     = document.getElementById('pf-nome').value.trim();
+  const email    = document.getElementById('pf-email').value.trim();
+  const telefone = document.getElementById('pf-tel').value.trim();
+  const m        = document.getElementById('msgPerfil');
+  if (!nome) { msg(m, 'O nome é obrigatório.', 'err'); return; }
+  try {
+    const u = await api.me.salvar({ nome, email, telefone });
+    // Atualiza sessão e topo
+    Auth.usuario = { ...(Auth.usuario || {}), nome: u.nome, email: u.email };
+    const primeiro = (u.nome || '').split(' ')[0];
+    document.getElementById('profName').textContent = primeiro;
+    document.getElementById('topName').textContent  = primeiro;
+    const ava = document.getElementById('topAva');
+    if (ava) ava.textContent = (u.nome || '?').trim()[0].toUpperCase();
+    msg(m, 'Perfil salvo com sucesso!', 'ok');
+  } catch (e) { msg(m, e.message, 'err'); }
 });
 
 /* ===== Modal editar senha ===== */
@@ -401,8 +438,7 @@ document.getElementById('formMaterial').addEventListener('submit', async () => {
   } catch (e) { msg(m, e.message, 'err'); }
 });
 
-/* ===== Horário (grade editável — localStorage) ===== */
-const HOR_KEY = 'saar_horario';
+/* ===== Horário (grade editável — backend) ===== */
 const horarioPadrao = [
   { turno: 'Manhã', periodo: '1º', horario: '08:00 - 08:45', seg: 'Turma 1', ter: 'Turma 1', qua: 'Turma 3', qui: 'Turma 3', sex: 'Turma 5' },
   { turno: '',      periodo: '2º', horario: '08:45 - 09:30', seg: 'Turma 1', ter: 'Turma 1', qua: 'Turma 3', qui: 'Turma 3', sex: 'Turma 5' },
@@ -415,23 +451,31 @@ const horarioPadrao = [
 ];
 const turmaCores = { 'Turma 1':'#1d4ed8','Turma 2':'#0f766e','Turma 3':'#7c3aed','Turma 4':'#b45309','Turma 5':'#be123c','Turma 6':'#065f46' };
 
-function horChave() { return `${HOR_KEY}_${new Date().getFullYear()}_${document.getElementById('horMes').value}`; }
+let horarioAtual = JSON.parse(JSON.stringify(horarioPadrao));
 function clonarHorarioPadrao() { return JSON.parse(JSON.stringify(horarioPadrao)); }
-function getHorarioData() {
-  try { return JSON.parse(localStorage.getItem(horChave())) || clonarHorarioPadrao(); }
-  catch (e) { return clonarHorarioPadrao(); }
+function horChave() { return `${new Date().getFullYear()}_${document.getElementById('horMes').value}`; }
+
+async function carregarHorario() {
+  try {
+    const dados = await api.horarios.buscar(horChave());
+    horarioAtual = (Array.isArray(dados) && dados.length === 8) ? dados : clonarHorarioPadrao();
+  } catch (e) {
+    horarioAtual = clonarHorarioPadrao();
+    toast('Erro ao carregar horário: ' + e.message, 'err');
+  }
+  renderHorario();
 }
+
 function aplicarCorCelula(cell, valor) {
   const cor = turmaCores[valor.trim()];
   if (cor) { cell.classList.add('has-color'); cell.style.setProperty('--cell-color', cor); }
   else { cell.classList.remove('has-color'); cell.style.removeProperty('--cell-color'); }
 }
 function renderHorario() {
-  const dados = getHorarioData();
   const body = document.getElementById('horBody');
   const dias = ['seg', 'ter', 'qua', 'qui', 'sex'];
   let rows = '';
-  dados.forEach((r, i) => {
+  horarioAtual.forEach((r, i) => {
     let turnoCell = '';
     if (i === 0) turnoCell = `<td class="hor-td-turno manha" rowspan="4">Manhã</td>`;
     if (i === 4) turnoCell = `<td class="hor-td-turno tarde" rowspan="4">Tarde</td>`;
@@ -451,52 +495,45 @@ function renderHorario() {
   });
   body.innerHTML = rows;
   body.querySelectorAll('.hor-cell').forEach(cell => {
-    cell.addEventListener('input', () => { aplicarCorCelula(cell, cell.textContent); salvarHorarioAutomatico(); });
+    cell.addEventListener('input', () => aplicarCorCelula(cell, cell.textContent));
     cell.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); cell.blur(); } });
   });
   body.querySelectorAll('.hor-td-horario[contenteditable]').forEach(cell => {
-    cell.addEventListener('input', salvarHorarioAutomatico);
     cell.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); cell.blur(); } });
   });
 }
 function coletarHorario() {
-  const dados = getHorarioData();
   document.querySelectorAll('#horBody [contenteditable][data-row]').forEach(cell => {
     const row = Number(cell.dataset.row);
     const col = cell.dataset.col;
-    if (dados[row] && col) dados[row][col] = cell.textContent.trim();
+    if (horarioAtual[row] && col) horarioAtual[row][col] = cell.textContent.trim();
   });
-  return dados;
+  return horarioAtual;
 }
-function salvarHorarioAutomatico() { localStorage.setItem(horChave(), JSON.stringify(coletarHorario())); }
 
-document.getElementById('btnSalvarHorario').addEventListener('click', () => {
-  salvarHorarioAutomatico();
+document.getElementById('btnSalvarHorario').addEventListener('click', async () => {
   const m = document.getElementById('msgHorario');
-  msg(m, '✓ Horário salvo com sucesso!', 'ok');
-  setTimeout(() => m.classList.remove('show'), 2500);
+  try {
+    await api.horarios.salvar(horChave(), coletarHorario());
+    msg(m, '✓ Horário salvo com sucesso!', 'ok');
+    setTimeout(() => m.classList.remove('show'), 2500);
+  } catch (e) { msg(m, e.message, 'err'); }
 });
 document.getElementById('btnResetHorario').addEventListener('click', () => {
-  confirmar('Resetar para o horário padrão? As edições salvas serão apagadas.', () => {
-    localStorage.removeItem(horChave());
-    renderHorario();
+  confirmar('Resetar para o horário padrão? As edições salvas serão apagadas.', async () => {
     const m = document.getElementById('msgHorario');
-    msg(m, 'Horário restaurado para o padrão.', 'info');
-    setTimeout(() => m.classList.remove('show'), 2500);
+    try {
+      await api.horarios.resetar(horChave());
+      horarioAtual = clonarHorarioPadrao();
+      renderHorario();
+      msg(m, 'Horário restaurado para o padrão.', 'info');
+      setTimeout(() => m.classList.remove('show'), 2500);
+    } catch (e) { msg(m, e.message, 'err'); }
   });
 });
-document.getElementById('horMes').addEventListener('change', renderHorario);
+document.getElementById('horMes').addEventListener('change', carregarHorario);
 document.getElementById('horMes').value = String(new Date().getMonth());
-(function() {
-  for (let i = localStorage.length - 1; i >= 0; i--) {
-    const k = localStorage.key(i);
-    if (k && k.startsWith(HOR_KEY)) {
-      try { const d = JSON.parse(localStorage.getItem(k)); if (Array.isArray(d) && d[0] && ('semana' in d[0] || d.length !== 8)) localStorage.removeItem(k); }
-      catch(e) { localStorage.removeItem(k); }
-    }
-  }
-})();
-renderHorario();
+carregarHorario();
 
 /* ===== Alunos (API) ===== */
 const TURMAS = ['Turma 1','Turma 2','Turma 3','Turma 4','Turma 5','Turma 6'];

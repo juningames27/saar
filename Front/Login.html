@@ -183,7 +183,7 @@
       const { token, usuario: user } = await api.login(cpf, senhaDigitada);
       Auth.token = token;
       Auth.usuario = user;
-      window.location.href = 'admin.html';
+      window.location.href = (user.nivel === 'aluno') ? 'aluno.html' : 'admin.html';
     } catch (e) {
       mostrarErro(e.message || 'CPF ou senha incorretos.');
       btn.disabled = false;
