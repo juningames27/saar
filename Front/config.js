@@ -1,4 +1,7 @@
-// ===== Configuração da API =====
-// Troque pela URL do seu backend no Render depois do deploy.
-// Em teste local, deixe http://localhost:3000
-window.SAAR_API = "https://saar-ryqd.onrender.com";
+const isLocal =
+  window.location.hostname === "localhost" ||
+  window.location.hostname === "127.0.0.1";
+
+window.SAAR_API = isLocal
+  ? "http://localhost:3000"
+  : "https://saar-ryqd.onrender.com";
