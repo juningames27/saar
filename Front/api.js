@@ -12,9 +12,41 @@ const Auth = {
   sair() {
     localStorage.removeItem("saar_token");
     localStorage.removeItem("saar_usuario");
+    localStorage.removeItem("saar_login_time");
     window.location.href = "Login.html";
   },
 };
+
+// ===== Sessão com tempo limite (2 horas por dispositivo) =====
+const SESSAO_DURACAO_MS = 2 * 60 * 60 * 1000; // 2h
+
+function iniciarSessaoTimer() {
+  let inicio = Number(localStorage.getItem("saar_login_time"));
+  if (!inicio) { inicio = Date.now(); localStorage.setItem("saar_login_time", String(inicio)); }
+
+  const span = document.getElementById("sessaoTempo");
+  const wrap = document.getElementById("sessaoTimer");
+
+  function tick() {
+    const restante = inicio + SESSAO_DURACAO_MS - Date.now();
+    if (restante <= 0) {
+      if (wrap) wrap.classList.add("alerta");
+      alert("Seu acesso de 2 horas expirou. Faça login novamente.");
+      Auth.sair();
+      return;
+    }
+    if (span) {
+      const h = Math.floor(restante / 3600000);
+      const m = Math.floor((restante % 3600000) / 60000);
+      const s = Math.floor((restante % 60000) / 1000);
+      span.textContent = `${String(h).padStart(2,"0")}:${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`;
+    }
+    if (wrap) wrap.classList.toggle("alerta", restante < 5 * 60 * 1000); // alerta nos últimos 5 min
+  }
+  tick();
+  setInterval(tick, 1000);
+}
+window.iniciarSessaoTimer = iniciarSessaoTimer;
 
 // Função central de requisição
 async function apiFetch(caminho, opcoes = {}) {

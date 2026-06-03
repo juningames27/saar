@@ -49,6 +49,9 @@ function toast(text, type = 'info', duration = 3000) {
 })();
 document.querySelectorAll('.side-item.danger').forEach(a => a.addEventListener('click', e => { e.preventDefault(); Auth.sair(); }));
 
+/* ===== Sessão de 2 horas ===== */
+iniciarSessaoTimer();
+
 /* ===== Navegação ===== */
 const navItems = document.querySelectorAll('.side-item[data-panel]');
 const panels   = document.querySelectorAll('.panel');

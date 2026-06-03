@@ -28,6 +28,10 @@
       </div>
 
       <div class="side-divider"></div>
+      <div class="sessao-timer" id="sessaoTimer" title="Tempo restante de acesso">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 14"/></svg>
+        <span id="sessaoTempo">02:00:00</span>
+      </div>
       <div class="side-label">Menu</div>
 
       <nav class="side-nav">
@@ -657,9 +661,13 @@
 
             <!-- Lista de alunos -->
             <div id="chamadaLista" style="display:none;">
-              <!-- cabeçalho gerado por JS -->
-              <div class="chamada-cabecalho" id="chamadaCabecalho"></div>
-              <!-- tabela de alunos -->
+              <div class="chamada-topo">
+                <div class="chamada-cabecalho" id="chamadaCabecalho"></div>
+                <button class="chamada-fechar" id="btnFecharChamada" title="Fechar chamada" aria-label="Fechar chamada">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                </button>
+              </div>
+              <p class="chamada-dica">Marque <b>P</b> (presente), <b>F</b> (falta) ou <b>J</b> (justificada). Quem ficar <u>sem marcar</u> conta como <b>falta</b>.</p>
               <div class="card" style="padding:0;overflow:hidden;">
                 <table class="chamada-table">
                   <thead>
@@ -681,6 +689,17 @@
                 <h2 style="font-size:1rem;font-weight:700;">Histórico de chamadas</h2>
                 <button class="btn btn-ghost" id="btnFecharHistorico">Fechar</button>
               </div>
+
+              <!-- Filtro por dia ou intervalo -->
+              <div class="card" style="margin-bottom:16px;">
+                <div class="hist-filtro">
+                  <div class="field"><label for="histDe">Do dia</label><input type="date" id="histDe"></div>
+                  <div class="field"><label for="histAte">Até (opcional)</label><input type="date" id="histAte"></div>
+                  <button class="btn btn-primary" id="btnFiltrarHist">Filtrar</button>
+                  <button class="btn btn-ghost" id="btnLimparHist">Mostrar todas</button>
+                </div>
+              </div>
+
               <div class="card" style="padding:0;overflow:hidden;">
                 <table class="chamada-table" id="historicoTable">
                   <thead>
@@ -689,15 +708,29 @@
                       <th>Turma</th>
                       <th>Presentes</th>
                       <th>Faltas</th>
-                      <th style="width:80px;"></th>
+                      <th style="width:110px;"></th>
                     </tr>
                   </thead>
                   <tbody id="historicoBody"></tbody>
                 </table>
               </div>
-              <p class="list-empty" id="historicoEmpty" style="display:none;">Nenhuma chamada registrada ainda.</p>
+              <p class="list-empty" id="historicoEmpty" style="display:none;">Nenhuma chamada encontrada para esse período.</p>
             </div>
           </section>
+
+          <!-- ===== Modal: detalhe da chamada ===== -->
+          <div class="modal" id="modalChamadaDet">
+            <div class="card modal-mat-card">
+              <button class="modal-close" id="chamDetClose" aria-label="Fechar">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+              </button>
+              <div class="card-head">
+                <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></div>
+                <div><h2 id="chamDetTitulo">Chamada</h2><p id="chamDetMeta"></p></div>
+              </div>
+              <div id="chamDetLista" class="chamada-det-lista"></div>
+            </div>
+          </div>
 
           <!-- ===== PROJETOS ===== -->
           <section class="panel" id="projetos">

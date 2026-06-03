@@ -183,6 +183,7 @@
       const { token, usuario: user } = await api.login(cpf, senhaDigitada);
       Auth.token = token;
       Auth.usuario = user;
+      localStorage.setItem('saar_login_time', String(Date.now())); // inicia a sessão de 2h
       window.location.href = (user.nivel === 'aluno') ? 'aluno.html' : 'admin.html';
     } catch (e) {
       mostrarErro(e.message || 'CPF ou senha incorretos.');

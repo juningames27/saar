@@ -1389,3 +1389,52 @@ body {
   font-size: .78rem; color: var(--label); text-align: center;
   padding: 8px 12px; width: 100%; border-top: 1px solid var(--card-border);
 }
+
+/* ===== Cronômetro de sessão (acima do Menu) ===== */
+.sessao-timer {
+  display: flex; align-items: center; justify-content: center; gap: 7px;
+  margin: 8px 12px 2px; padding: 7px 10px;
+  border: 1px solid var(--card-border); border-radius: 8px;
+  background: var(--accent-light); color: var(--accent-hover);
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: .82rem; font-weight: 700; letter-spacing: .04em;
+}
+.sessao-timer svg { width: 15px; height: 15px; flex-shrink: 0; }
+.sessao-timer.alerta {
+  background: var(--danger-light); color: var(--danger);
+  border-color: var(--danger); animation: pulsa 1s ease-in-out infinite;
+}
+@keyframes pulsa { 50% { opacity: .55; } }
+
+/* ===== Chamada — melhorias ===== */
+.chamada-topo {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 12px; margin: 18px 0 4px;
+}
+.chamada-fechar {
+  width: 34px; height: 34px; border-radius: 8px; flex-shrink: 0;
+  border: 1px solid var(--card-border); background: transparent;
+  color: var(--dim); cursor: pointer; display: grid; place-items: center;
+  transition: all .12s;
+}
+.chamada-fechar:hover { background: var(--danger-light); color: var(--danger); border-color: transparent; }
+.chamada-fechar svg { width: 18px; height: 18px; }
+.chamada-dica { font-size: .8rem; color: var(--dim); margin: 0 2px 12px; }
+.chamada-dica b { color: var(--txt); }
+
+/* Filtro do histórico */
+.hist-filtro { display: flex; align-items: flex-end; gap: 12px; flex-wrap: wrap; }
+.hist-filtro .field { min-width: 150px; }
+.hist-row:hover td { background: rgba(255,255,255,.03); }
+
+/* Detalhe da chamada */
+.chamada-det-lista { display: flex; flex-direction: column; gap: 2px; max-height: 60vh; overflow-y: auto; }
+.chamada-det-row {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  padding: 10px 12px; border-bottom: 1px solid var(--card-border); font-size: .9rem; color: var(--txt);
+}
+.chamada-det-row:last-child { border-bottom: none; }
+.chamada-status { padding: 3px 12px; border-radius: 20px; font-size: .74rem; font-weight: 700; white-space: nowrap; }
+.chamada-status.pres { background: rgba(34,197,94,.16);  color: #22c55e; }
+.chamada-status.falt { background: rgba(239,68,68,.16);  color: #ef4444; }
+.chamada-status.just { background: rgba(245,158,11,.16); color: #f59e0b; }

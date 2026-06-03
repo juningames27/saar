@@ -762,6 +762,12 @@ function salvarChamadas(lista) { localStorage.setItem(CHAMADA_KEY, JSON.stringif
 
 document.getElementById('chamadaData').value = new Date().toISOString().slice(0,10);
 
+function fecharChamada() {
+  document.getElementById('chamadaLista').style.display     = 'none';
+  document.getElementById('btnSalvarChamada').style.display = 'none';
+}
+document.getElementById('btnFecharChamada').addEventListener('click', fecharChamada);
+
 document.getElementById('btnAbrirChamada').addEventListener('click', () => {
   const turma = Number(document.getElementById('chamadaTurma').value);
   const data  = document.getElementById('chamadaData').value;
@@ -776,30 +782,33 @@ document.getElementById('btnAbrirChamada').addEventListener('click', () => {
   document.getElementById('chamadaCabecalho').innerHTML = `<div class="chamada-cabecalho-inner"><span class="chamada-turma-badge" style="background:${cor}22;color:${cor}">Turma ${turma}</span><span class="chamada-data-txt">${dataFmt}</span></div>`;
   const body = document.getElementById('chamadaBody');
   body.innerHTML = alunos.map(a => {
-    const est = freq[a.id] || 'P';
+    const est = freq[a.id] || '';   // vazio = não marcado (não vem clicado)
     const av  = a.foto ? `<img src="${a.foto}" class="chamada-avatar" alt="">` : `<div class="chamada-avatar chamada-avatar-init" style="background:${cor}22;color:${cor}">${iniciaisAluno(a.nome)}</div>`;
     return `<tr class="chamada-row" data-id="${a.id}"><td class="chamada-nome-cell"><div class="chamada-aluno">${av}<span>${a.nome}</span></div></td><td class="chamada-freq-cell"><div class="chamada-btns"><button class="chamada-btn pres${est==='P'?' active':''}" data-val="P">P</button><button class="chamada-btn falt${est==='F'?' active':''}" data-val="F">F</button><button class="chamada-btn just${est==='J'?' active':''}" data-val="J">J</button></div></td></tr>`;
   }).join('');
   body.querySelectorAll('.chamada-row').forEach(row => {
     row.querySelectorAll('.chamada-btn').forEach(btn => {
       btn.addEventListener('click', () => {
+        const jaAtivo = btn.classList.contains('active');
         row.querySelectorAll('.chamada-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
+        if (!jaAtivo) btn.classList.add('active'); // clicar de novo desmarca
         atualizarResumo();
       });
     });
   });
   atualizarResumo();
+  document.getElementById('msgChamada').className = 'form-msg';
   document.getElementById('chamadaLista').style.display     = 'block';
   document.getElementById('btnSalvarChamada').style.display = 'flex';
   document.getElementById('chamadaHistorico').style.display = 'none';
 });
 
+// Quem não está marcado conta como falta
 function atualizarResumo() {
   let p = 0, f = 0, j = 0;
   document.querySelectorAll('#chamadaBody .chamada-row').forEach(row => {
-    const v = row.querySelector('.chamada-btn.active')?.dataset.val || 'P';
-    if (v === 'P') p++; else if (v === 'F') f++; else j++;
+    const v = row.querySelector('.chamada-btn.active')?.dataset.val;
+    if (v === 'P') p++; else if (v === 'J') j++; else f++;
   });
   const total = p + f + j;
   document.getElementById('chamadaResumo').innerHTML = `<div class="chamada-resumo-inner"><span class="cr-item pres"><strong>${p}</strong> presente${p!==1?'s':''}</span><span class="cr-sep">·</span><span class="cr-item falt"><strong>${f}</strong> falta${f!==1?'s':''}</span>${j?`<span class="cr-sep">·</span><span class="cr-item just"><strong>${j}</strong> justificada${j!==1?'s':''}</span>`:''}<span class="cr-sep">·</span><span class="cr-item"><strong>${total}</strong> total</span></div>`;
@@ -811,15 +820,15 @@ document.getElementById('btnSalvarChamada').addEventListener('click', () => {
   if (!turma || !data) return;
   const frequencia = {};
   document.querySelectorAll('#chamadaBody .chamada-row').forEach(row => {
-    frequencia[Number(row.dataset.id)] = row.querySelector('.chamada-btn.active')?.dataset.val || 'P';
+    // sem marcação → falta
+    frequencia[Number(row.dataset.id)] = row.querySelector('.chamada-btn.active')?.dataset.val || 'F';
   });
   const vals  = Object.values(frequencia);
   const lista = getChamadas().filter(c => !(c.data === data && c.turma === turma));
   lista.unshift({ id: `${data}_${turma}`, data, turma, frequencia, presentes: vals.filter(v => v === 'P').length, faltas: vals.filter(v => v === 'F').length, justificadas: vals.filter(v => v === 'J').length });
   salvarChamadas(lista);
-  const m = document.getElementById('msgChamada');
-  msg(m, '✓ Chamada salva com sucesso!', 'ok');
-  setTimeout(() => m.classList.remove('show'), 2500);
+  toast('✓ Chamada salva com sucesso!', 'ok');
+  fecharChamada();   // fecha a frequência aberta após salvar
 });
 
 document.getElementById('btnVerHistorico').addEventListener('click', () => {
@@ -831,9 +840,22 @@ document.getElementById('btnVerHistorico').addEventListener('click', () => {
 document.getElementById('btnFecharHistorico').addEventListener('click', () => {
   document.getElementById('chamadaHistorico').style.display = 'none';
 });
+document.getElementById('btnFiltrarHist').addEventListener('click', () => {
+  renderHistorico(document.getElementById('histDe').value, document.getElementById('histAte').value);
+});
+document.getElementById('btnLimparHist').addEventListener('click', () => {
+  document.getElementById('histDe').value = '';
+  document.getElementById('histAte').value = '';
+  renderHistorico();
+});
 
-function renderHistorico() {
-  const lista = getChamadas();
+function renderHistorico(de, ate) {
+  let lista = getChamadas();
+  if (de && ate) lista = lista.filter(c => c.data >= de && c.data <= ate);
+  else if (de)   lista = lista.filter(c => c.data === de);
+  // ordena por data (mais recente primeiro)
+  lista = lista.slice().sort((a, b) => b.data.localeCompare(a.data));
+
   const body  = document.getElementById('historicoBody');
   const empty = document.getElementById('historicoEmpty');
   if (!lista.length) { body.innerHTML = ''; empty.style.display = 'block'; return; }
@@ -841,12 +863,66 @@ function renderHistorico() {
   body.innerHTML = lista.map(c => {
     const cor     = CARO_CORES[(c.turma - 1) % CARO_CORES.length];
     const dataFmt = new Date(c.data + 'T12:00:00').toLocaleDateString('pt-BR');
-    return `<tr><td style="padding:12px 20px;font-weight:600;">${dataFmt}</td><td style="text-align:center;"><span class="caro-badge" style="background:${cor}22;color:${cor}">Turma ${c.turma}</span></td><td style="text-align:center;color:#22c55e;font-weight:700;">${c.presentes}</td><td style="text-align:center;color:#ef4444;font-weight:700;">${c.faltas}${c.justificadas?` <small style="color:#f59e0b">(+${c.justificadas}J)</small>`:''}</td><td style="text-align:center;"><button class="row-btn danger hist-del" data-id="${c.id}" title="Excluir"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></button></td></tr>`;
+    return `<tr class="hist-row" data-id="${c.id}" style="cursor:pointer">
+      <td style="padding:12px 20px;font-weight:600;">${dataFmt}</td>
+      <td style="text-align:center;"><span class="caro-badge" style="background:${cor}22;color:${cor}">Turma ${c.turma}</span></td>
+      <td style="text-align:center;color:#22c55e;font-weight:700;">${c.presentes}</td>
+      <td style="text-align:center;color:#ef4444;font-weight:700;">${c.faltas}${c.justificadas?` <small style="color:#f59e0b">(+${c.justificadas}J)</small>`:''}</td>
+      <td style="text-align:center;">
+        <button class="row-btn hist-ver" data-id="${c.id}" title="Ver"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
+        <button class="row-btn danger hist-del" data-id="${c.id}" title="Excluir"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></button>
+      </td>
+    </tr>`;
   }).join('');
+  body.querySelectorAll('.hist-row').forEach(row => {
+    row.addEventListener('click', e => {
+      if (e.target.closest('.hist-del')) return;
+      abrirDetalheChamada(row.dataset.id);
+    });
+  });
   body.querySelectorAll('.hist-del').forEach(btn => {
-    btn.addEventListener('click', () => { salvarChamadas(getChamadas().filter(c => c.id !== btn.dataset.id)); renderHistorico(); });
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const c = getChamadas().find(x => x.id === btn.dataset.id);
+      const dataFmt = c ? new Date(c.data + 'T12:00:00').toLocaleDateString('pt-BR') : '';
+      confirmar(`Excluir a chamada de ${dataFmt} (Turma ${c?.turma})?`, () => {
+        salvarChamadas(getChamadas().filter(x => x.id !== btn.dataset.id));
+        renderHistorico(document.getElementById('histDe').value, document.getElementById('histAte').value);
+        toast('Chamada excluída.', 'ok');
+      });
+    });
   });
 }
+
+/* Detalhe de uma chamada (lista os alunos e a situação de cada um) */
+const modalChamadaDet = document.getElementById('modalChamadaDet');
+function abrirDetalheChamada(id) {
+  const c = getChamadas().find(x => x.id === id);
+  if (!c) return;
+  const cor = CARO_CORES[(c.turma - 1) % CARO_CORES.length];
+  const dataFmt = new Date(c.data + 'T12:00:00').toLocaleDateString('pt-BR', { weekday: 'long', day: '2-digit', month: 'long', year: 'numeric' });
+  document.getElementById('chamDetTitulo').textContent = `Turma ${c.turma}`;
+  document.getElementById('chamDetMeta').textContent =
+    `${dataFmt} · ${c.presentes} presente(s) · ${c.faltas} falta(s)` + (c.justificadas ? ` · ${c.justificadas} justificada(s)` : '');
+
+  const alunos = getAlunos();
+  const linhas = Object.entries(c.frequencia).map(([aid, status]) => {
+    const al   = alunos.find(a => String(a.id) === String(aid));
+    const nome = al ? al.nome : `Aluno #${aid}`;
+    const badge = status === 'P' ? '<span class="chamada-status pres">Presente</span>'
+                : status === 'J' ? '<span class="chamada-status just">Justificada</span>'
+                : '<span class="chamada-status falt">Falta</span>';
+    return { nome, badge, status };
+  }).sort((a, b) => a.nome.localeCompare(b.nome));
+
+  document.getElementById('chamDetLista').innerHTML = linhas.length
+    ? linhas.map(l => `<div class="chamada-det-row"><span>${l.nome}</span>${l.badge}</div>`).join('')
+    : '<p class="list-empty">Sem registros nesta chamada.</p>';
+
+  modalChamadaDet.classList.add('show');
+}
+document.getElementById('chamDetClose').addEventListener('click', () => modalChamadaDet.classList.remove('show'));
+modalChamadaDet.addEventListener('click', e => { if (e.target === modalChamadaDet) modalChamadaDet.classList.remove('show'); });
 
 /* ===== Administradores (API) ===== */
 let adminsCache = [];
@@ -972,6 +1048,9 @@ document.getElementById('formAdm').addEventListener('submit', async () => {
 });
 
 document.getElementById('buscaAdm').addEventListener('input', e => renderAdmins(e.target.value));
+
+/* ===== Sessão de 2 horas ===== */
+iniciarSessaoTimer();
 
 /* ===== Carregamento inicial (busca do banco) ===== */
 carregarAlunos();
