@@ -157,10 +157,14 @@ function normalizarMaterial(m) {
   return {
     id: m.id, nome: m.nome, descricao: m.descricao || '',
     turma: m.turma || '—', tipo: m.tipo || 'Outro',
-    arquivo_nome: m.arquivo_nome || null, arquivo_url: m.arquivo_url || null,
+    arquivo_nome: m.arquivo_nome || null, temArquivo: !!m.tem_arquivo,
     data: m.criado_em ? new Date(m.criado_em).toLocaleDateString('pt-BR') : '',
   };
 }
+const API_BASE = window.SAAR_API || '';
+function urlArquivo(id, download) { return `${API_BASE}/api/materiais/${id}/arquivo${download ? '?download=1' : ''}`; }
+function ehImagem(nome) { return /\.(png|jpe?g|gif|webp|bmp|svg|avif)$/i.test(nome || ''); }
+function ehPdf(nome)    { return /\.pdf$/i.test(nome || ''); }
 async function carregarMateriais() {
   try { const lista = await api.materiais.listar(); materiaisCache = lista.map(normalizarMaterial); renderMateriais(document.getElementById('buscaMaterial').value); }
   catch (e) { toast('Erro ao carregar materiais: ' + e.message, 'err'); }
@@ -191,17 +195,7 @@ function renderMateriais(filtro = '') {
   body.querySelectorAll('.mat-abrir, .mat-abrir-btn').forEach(el => el.addEventListener('click', () => abrirMaterial(Number(el.dataset.id))));
 }
 
-function dataURLparaBlob(dataurl) {
-  const partes = dataurl.split(',');
-  const mime = (partes[0].match(/data:([^;]+)/) || [])[1] || 'application/octet-stream';
-  const bin = atob(partes[1]);
-  const arr = new Uint8Array(bin.length);
-  for (let i = 0; i < bin.length; i++) arr[i] = bin.charCodeAt(i);
-  return new Blob([arr], { type: mime });
-}
-
 const modalMaterial = document.getElementById('modalMaterial');
-let matBlobUrl = null;
 
 function abrirMaterial(id) {
   const m = materiaisCache.find(x => x.id === id);
@@ -212,25 +206,22 @@ function abrirMaterial(id) {
   const prev   = document.getElementById('matVerPreview');
   const baixar = document.getElementById('matVerBaixar');
   const abrir  = document.getElementById('matVerAbrir');
-  const url    = m.arquivo_url;
 
-  if (matBlobUrl) { URL.revokeObjectURL(matBlobUrl); matBlobUrl = null; }
-
-  if (!url) {
+  if (!m.temArquivo) {
     prev.innerHTML = '<div class="mat-sem-arquivo">Nenhum arquivo anexado a este material.</div>';
     baixar.style.display = 'none';
     abrir.style.display = 'none';
   } else {
-    matBlobUrl = URL.createObjectURL(dataURLparaBlob(url));
+    const ver = urlArquivo(m.id, false);
     baixar.style.display = 'inline-flex';
-    baixar.href = matBlobUrl;
-    baixar.setAttribute('download', m.arquivo_nome || 'arquivo');
+    baixar.href = urlArquivo(m.id, true);
+    baixar.removeAttribute('download');
     abrir.style.display = 'inline-flex';
-    abrir.href = matBlobUrl;
-    if (url.startsWith('data:image/')) {
-      prev.innerHTML = `<img src="${matBlobUrl}" alt="${m.nome}" class="mat-preview-img">`;
-    } else if (url.startsWith('data:application/pdf')) {
-      prev.innerHTML = `<iframe src="${matBlobUrl}" class="mat-preview-pdf" title="Pré-visualização"></iframe>
+    abrir.href = ver;
+    if (ehImagem(m.arquivo_nome)) {
+      prev.innerHTML = `<img src="${ver}" alt="${m.nome}" class="mat-preview-img">`;
+    } else if (ehPdf(m.arquivo_nome)) {
+      prev.innerHTML = `<iframe src="${ver}" class="mat-preview-pdf" title="Pré-visualização"></iframe>
         <div class="mat-preview-aviso">No celular o PDF pode não aparecer aqui — use <strong>Abrir em nova aba</strong>.</div>`;
     } else {
       prev.innerHTML = `<div class="mat-sem-arquivo"><strong>${m.arquivo_nome || 'Arquivo'}</strong><br>Use os botões abaixo para abrir ou baixar.</div>`;
@@ -238,10 +229,7 @@ function abrirMaterial(id) {
   }
   modalMaterial.classList.add('show');
 }
-function fecharMaterial() {
-  modalMaterial.classList.remove('show');
-  if (matBlobUrl) { URL.revokeObjectURL(matBlobUrl); matBlobUrl = null; }
-}
+function fecharMaterial() { modalMaterial.classList.remove('show'); }
 document.getElementById('matVerClose').addEventListener('click', fecharMaterial);
 modalMaterial.addEventListener('click', e => { if (e.target === modalMaterial) fecharMaterial(); });
 document.getElementById('buscaMaterial').addEventListener('input', e => renderMateriais(e.target.value));
