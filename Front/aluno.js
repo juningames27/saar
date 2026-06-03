@@ -57,6 +57,7 @@ function openPanel(id) {
   navItems.forEach(b => b.classList.toggle('active', b.dataset.panel === id));
   closeMenu();
   window.scrollTo({ top: 0, behavior: 'smooth' });
+  try { localStorage.setItem('saar_painel_aluno', id); } catch (e) {}
   if (id === 'materiais') carregarMateriais();
   if (id === 'horario')   carregarHorario();
 }
@@ -190,31 +191,59 @@ function renderMateriais(filtro = '') {
   body.querySelectorAll('.mat-abrir, .mat-abrir-btn').forEach(el => el.addEventListener('click', () => abrirMaterial(Number(el.dataset.id))));
 }
 
+function dataURLparaBlob(dataurl) {
+  const partes = dataurl.split(',');
+  const mime = (partes[0].match(/data:([^;]+)/) || [])[1] || 'application/octet-stream';
+  const bin = atob(partes[1]);
+  const arr = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) arr[i] = bin.charCodeAt(i);
+  return new Blob([arr], { type: mime });
+}
+
 const modalMaterial = document.getElementById('modalMaterial');
+let matBlobUrl = null;
+
 function abrirMaterial(id) {
   const m = materiaisCache.find(x => x.id === id);
   if (!m) return;
   document.getElementById('matVerNome').textContent = m.nome;
   document.getElementById('matVerMeta').textContent = `${m.tipo} · ${m.turma} · ${m.data}`;
   document.getElementById('matVerDesc').textContent = m.descricao || 'Sem descrição.';
-  const prev = document.getElementById('matVerPreview');
+  const prev   = document.getElementById('matVerPreview');
   const baixar = document.getElementById('matVerBaixar');
-  const url = m.arquivo_url;
+  const abrir  = document.getElementById('matVerAbrir');
+  const url    = m.arquivo_url;
+
+  if (matBlobUrl) { URL.revokeObjectURL(matBlobUrl); matBlobUrl = null; }
+
   if (!url) {
     prev.innerHTML = '<div class="mat-sem-arquivo">Nenhum arquivo anexado a este material.</div>';
     baixar.style.display = 'none';
+    abrir.style.display = 'none';
   } else {
+    matBlobUrl = URL.createObjectURL(dataURLparaBlob(url));
     baixar.style.display = 'inline-flex';
-    baixar.href = url;
+    baixar.href = matBlobUrl;
     baixar.setAttribute('download', m.arquivo_nome || 'arquivo');
-    if (url.startsWith('data:image/')) prev.innerHTML = `<img src="${url}" alt="${m.nome}" class="mat-preview-img">`;
-    else if (url.startsWith('data:application/pdf')) prev.innerHTML = `<iframe src="${url}" class="mat-preview-pdf" title="Pré-visualização"></iframe>`;
-    else prev.innerHTML = `<div class="mat-sem-arquivo"><strong>${m.arquivo_nome || 'Arquivo'}</strong><br>Sem pré-visualização para este tipo. Use o botão abaixo para baixar.</div>`;
+    abrir.style.display = 'inline-flex';
+    abrir.href = matBlobUrl;
+    if (url.startsWith('data:image/')) {
+      prev.innerHTML = `<img src="${matBlobUrl}" alt="${m.nome}" class="mat-preview-img">`;
+    } else if (url.startsWith('data:application/pdf')) {
+      prev.innerHTML = `<iframe src="${matBlobUrl}" class="mat-preview-pdf" title="Pré-visualização"></iframe>
+        <div class="mat-preview-aviso">No celular o PDF pode não aparecer aqui — use <strong>Abrir em nova aba</strong>.</div>`;
+    } else {
+      prev.innerHTML = `<div class="mat-sem-arquivo"><strong>${m.arquivo_nome || 'Arquivo'}</strong><br>Use os botões abaixo para abrir ou baixar.</div>`;
+    }
   }
   modalMaterial.classList.add('show');
 }
-document.getElementById('matVerClose').addEventListener('click', () => modalMaterial.classList.remove('show'));
-modalMaterial.addEventListener('click', e => { if (e.target === modalMaterial) modalMaterial.classList.remove('show'); });
+function fecharMaterial() {
+  modalMaterial.classList.remove('show');
+  if (matBlobUrl) { URL.revokeObjectURL(matBlobUrl); matBlobUrl = null; }
+}
+document.getElementById('matVerClose').addEventListener('click', fecharMaterial);
+modalMaterial.addEventListener('click', e => { if (e.target === modalMaterial) fecharMaterial(); });
 document.getElementById('buscaMaterial').addEventListener('input', e => renderMateriais(e.target.value));
 
 /* ===== Horário (somente leitura) ===== */
@@ -259,3 +288,14 @@ function renderHorario(dados) {
 }
 document.getElementById('horMes').addEventListener('change', carregarHorario);
 document.getElementById('horMes').value = String(new Date().getMonth());
+
+/* ===== Restaura a última aba aberta ===== */
+(function restaurarPainel() {
+  let id;
+  try { id = localStorage.getItem('saar_painel_aluno'); } catch (e) {}
+  if (!id || id === 'inicio') return;
+  const sub = document.querySelector(`.sub-item[data-sub="${id}"]`);
+  if (sub) { sub.click(); return; }
+  const top = document.querySelector(`.side-item[data-panel="${id}"]:not(.has-sub)`);
+  if (top) top.click();
+})();

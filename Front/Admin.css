@@ -1372,3 +1372,20 @@ body {
 .tema-opt:hover { transform: translateY(-2px); border-color: var(--accent-hover); }
 .tema-opt.active { border-color: var(--accent-hover); box-shadow: 0 0 0 3px rgba(59,130,246,.2); }
 .tema-amostra { width: 100%; height: 46px; border-radius: 8px; display: block; }
+
+/* ===== Tabelas roláveis no celular ===== */
+@media (max-width: 700px) {
+  .mat-table,
+  .chamada-table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+/* Aviso de preview de PDF no mobile */
+.mat-preview-aviso {
+  font-size: .78rem; color: var(--label); text-align: center;
+  padding: 8px 12px; width: 100%; border-top: 1px solid var(--card-border);
+}

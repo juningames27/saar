@@ -133,6 +133,7 @@ function openPanel(id) {
   navItems.forEach(b => b.classList.toggle('active', b.dataset.panel === id));
   closeMenu();
   window.scrollTo({ top: 0, behavior: 'smooth' });
+  try { localStorage.setItem('saar_painel_admin', id); } catch (e) {}
   if (id === 'materiais')       carregarMateriais();
   if (id === 'horario')         carregarHorario();
   if (id === 'carometro')       carregarAlunos();
@@ -357,7 +358,19 @@ function renderMateriais(filtro = '') {
   });
 }
 
+// Converte uma data URL (base64) em Blob — necessário pra preview/abrir/baixar no celular
+function dataURLparaBlob(dataurl) {
+  const partes = dataurl.split(',');
+  const mime = (partes[0].match(/data:([^;]+)/) || [])[1] || 'application/octet-stream';
+  const bin = atob(partes[1]);
+  const arr = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) arr[i] = bin.charCodeAt(i);
+  return new Blob([arr], { type: mime });
+}
+
 const modalMaterial = document.getElementById('modalMaterial');
+let matBlobUrl = null;
+
 function abrirMaterial(id) {
   const m = materiaisCache.find(x => x.id === id);
   if (!m) return;
@@ -367,26 +380,39 @@ function abrirMaterial(id) {
 
   const prev   = document.getElementById('matVerPreview');
   const baixar = document.getElementById('matVerBaixar');
+  const abrir  = document.getElementById('matVerAbrir');
   const url    = m.arquivo_url;
+
+  // Libera o blob anterior
+  if (matBlobUrl) { URL.revokeObjectURL(matBlobUrl); matBlobUrl = null; }
 
   if (!url) {
     prev.innerHTML = '<div class="mat-sem-arquivo">Nenhum arquivo anexado a este material.</div>';
     baixar.style.display = 'none';
+    abrir.style.display = 'none';
   } else {
+    matBlobUrl = URL.createObjectURL(dataURLparaBlob(url));
     baixar.style.display = 'inline-flex';
-    baixar.href = url;
+    baixar.href = matBlobUrl;
     baixar.setAttribute('download', m.arquivo_nome || 'arquivo');
+    abrir.style.display = 'inline-flex';
+    abrir.href = matBlobUrl;
+
     if (url.startsWith('data:image/')) {
-      prev.innerHTML = `<img src="${url}" alt="${m.nome}" class="mat-preview-img">`;
+      prev.innerHTML = `<img src="${matBlobUrl}" alt="${m.nome}" class="mat-preview-img">`;
     } else if (url.startsWith('data:application/pdf')) {
-      prev.innerHTML = `<iframe src="${url}" class="mat-preview-pdf" title="Pré-visualização"></iframe>`;
+      prev.innerHTML = `<iframe src="${matBlobUrl}" class="mat-preview-pdf" title="Pré-visualização"></iframe>
+        <div class="mat-preview-aviso">No celular o PDF pode não aparecer aqui — use <strong>Abrir em nova aba</strong>.</div>`;
     } else {
-      prev.innerHTML = `<div class="mat-sem-arquivo"><strong>${m.arquivo_nome || 'Arquivo'}</strong><br>Sem pré-visualização para este tipo. Use o botão abaixo para baixar.</div>`;
+      prev.innerHTML = `<div class="mat-sem-arquivo"><strong>${m.arquivo_nome || 'Arquivo'}</strong><br>Use os botões abaixo para abrir ou baixar.</div>`;
     }
   }
   modalMaterial.classList.add('show');
 }
-function fecharMaterial() { modalMaterial.classList.remove('show'); }
+function fecharMaterial() {
+  modalMaterial.classList.remove('show');
+  if (matBlobUrl) { URL.revokeObjectURL(matBlobUrl); matBlobUrl = null; }
+}
 document.getElementById('matVerClose').addEventListener('click', fecharMaterial);
 modalMaterial.addEventListener('click', e => { if (e.target === modalMaterial) fecharMaterial(); });
 
@@ -962,3 +988,14 @@ document.getElementById('buscaAdm').addEventListener('input', e => renderAdmins(
 /* ===== Carregamento inicial (busca do banco) ===== */
 carregarAlunos();
 carregarAdmins();
+
+/* ===== Restaura a última aba aberta (ao atualizar a página) ===== */
+(function restaurarPainel() {
+  let id;
+  try { id = localStorage.getItem('saar_painel_admin'); } catch (e) {}
+  if (!id || id === 'inicio') return;
+  const sub = document.querySelector(`.sub-item[data-sub="${id}"]`);
+  if (sub) { sub.click(); return; }
+  const top = document.querySelector(`.side-item[data-panel="${id}"]:not(.has-sub)`);
+  if (top) top.click();
+})();
