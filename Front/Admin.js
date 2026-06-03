@@ -274,13 +274,19 @@ document.querySelectorAll('.toggle-pw').forEach(btn => {
   });
 });
 
-document.getElementById('formSenha').addEventListener('submit', () => {
+document.getElementById('formSenha').addEventListener('submit', async () => {
   const nova = document.getElementById('pw-nova').value;
   const conf = document.getElementById('pw-conf').value;
   const m    = document.getElementById('msgSenha');
   if (nova.length < 6) { msg(m, 'A senha deve ter pelo menos 6 caracteres.', 'err'); return; }
   if (nova !== conf)   { msg(m, 'As senhas não coincidem.', 'err'); return; }
-  msg(m, 'Senha validada. Conecte ao backend para salvar a alteração.', 'ok');
+  try {
+    const nome = (Auth.usuario && Auth.usuario.nome) || document.getElementById('pf-nome').value.trim();
+    await api.me.salvar({ nome, senha: nova });
+    msg(m, 'Senha alterada com sucesso!', 'ok');
+    document.getElementById('formSenha').reset();
+    setTimeout(closeModal, 1200);
+  } catch (e) { msg(m, e.message, 'err'); }
 });
 
 /* ===== Materiais (API + arquivo/preview) ===== */
