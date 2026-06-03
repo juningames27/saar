@@ -1438,3 +1438,41 @@ body {
 .chamada-status.pres { background: rgba(34,197,94,.16);  color: #22c55e; }
 .chamada-status.falt { background: rgba(239,68,68,.16);  color: #ef4444; }
 .chamada-status.just { background: rgba(245,158,11,.16); color: #f59e0b; }
+
+/* ===== Chamada — ações no rodapé ===== */
+.chamada-acoes-baixo {
+  display: flex; gap: 10px; flex-wrap: wrap; margin-top: 16px;
+}
+
+/* ===== Detalhe da chamada — visual ===== */
+.chamada-det-row {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  padding: 10px 12px; border-radius: 10px; margin-bottom: 6px;
+  background: var(--input-bg); border: 1px solid var(--card-border);
+  border-left: 4px solid var(--card-border);
+}
+.chamada-det-row.pres { border-left-color: #22c55e; }
+.chamada-det-row.falt { border-left-color: #ef4444; }
+.chamada-det-row.just { border-left-color: #f59e0b; }
+
+.chamada-det-aluno { display: flex; align-items: center; gap: 11px; min-width: 0; }
+.chamada-det-aluno span { font-size: .92rem; font-weight: 600; color: var(--txt); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.chamada-det-ava {
+  width: 38px; height: 38px; border-radius: 50%; flex-shrink: 0; object-fit: cover;
+  display: grid; place-items: center; font-size: .76rem; font-weight: 800;
+}
+
+.chamada-status {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 5px 12px; border-radius: 20px; font-size: .76rem; font-weight: 700; white-space: nowrap; flex-shrink: 0;
+}
+.chamada-status b {
+  width: 18px; height: 18px; border-radius: 50%; display: grid; place-items: center;
+  font-size: .68rem; color: #fff;
+}
+.chamada-status.pres   { background: rgba(34,197,94,.14);  color: #22c55e; }
+.chamada-status.pres b { background: #22c55e; }
+.chamada-status.falt   { background: rgba(239,68,68,.14);  color: #ef4444; }
+.chamada-status.falt b { background: #ef4444; }
+.chamada-status.just   { background: rgba(245,158,11,.14); color: #f59e0b; }
+.chamada-status.just b { background: #f59e0b; }

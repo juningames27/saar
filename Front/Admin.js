@@ -814,7 +814,7 @@ function atualizarResumo() {
   document.getElementById('chamadaResumo').innerHTML = `<div class="chamada-resumo-inner"><span class="cr-item pres"><strong>${p}</strong> presente${p!==1?'s':''}</span><span class="cr-sep">·</span><span class="cr-item falt"><strong>${f}</strong> falta${f!==1?'s':''}</span>${j?`<span class="cr-sep">·</span><span class="cr-item just"><strong>${j}</strong> justificada${j!==1?'s':''}</span>`:''}<span class="cr-sep">·</span><span class="cr-item"><strong>${total}</strong> total</span></div>`;
 }
 
-document.getElementById('btnSalvarChamada').addEventListener('click', () => {
+function salvarChamada() {
   const turma = Number(document.getElementById('chamadaTurma').value);
   const data  = document.getElementById('chamadaData').value;
   if (!turma || !data) return;
@@ -829,7 +829,10 @@ document.getElementById('btnSalvarChamada').addEventListener('click', () => {
   salvarChamadas(lista);
   toast('✓ Chamada salva com sucesso!', 'ok');
   fecharChamada();   // fecha a frequência aberta após salvar
-});
+}
+document.getElementById('btnSalvarChamada').addEventListener('click', salvarChamada);
+document.getElementById('btnSalvarChamadaBaixo').addEventListener('click', salvarChamada);
+document.getElementById('btnCancelarChamadaBaixo').addEventListener('click', fecharChamada);
 
 document.getElementById('btnVerHistorico').addEventListener('click', () => {
   const hist = document.getElementById('chamadaHistorico');
@@ -906,17 +909,24 @@ function abrirDetalheChamada(id) {
     `${dataFmt} · ${c.presentes} presente(s) · ${c.faltas} falta(s)` + (c.justificadas ? ` · ${c.justificadas} justificada(s)` : '');
 
   const alunos = getAlunos();
+  const rotulo = { P: 'Presente', F: 'Falta', J: 'Justificada' };
+  const classe = { P: 'pres', F: 'falt', J: 'just' };
   const linhas = Object.entries(c.frequencia).map(([aid, status]) => {
     const al   = alunos.find(a => String(a.id) === String(aid));
     const nome = al ? al.nome : `Aluno #${aid}`;
-    const badge = status === 'P' ? '<span class="chamada-status pres">Presente</span>'
-                : status === 'J' ? '<span class="chamada-status just">Justificada</span>'
-                : '<span class="chamada-status falt">Falta</span>';
-    return { nome, badge, status };
+    const cls  = classe[status] || 'falt';
+    const ava  = (al && al.foto)
+      ? `<img src="${al.foto}" class="chamada-det-ava" alt="">`
+      : `<div class="chamada-det-ava" style="background:${cor}22;color:${cor}">${iniciaisAluno(nome)}</div>`;
+    return { nome, ava, cls, label: rotulo[status] || 'Falta', letra: status || 'F' };
   }).sort((a, b) => a.nome.localeCompare(b.nome));
 
   document.getElementById('chamDetLista').innerHTML = linhas.length
-    ? linhas.map(l => `<div class="chamada-det-row"><span>${l.nome}</span>${l.badge}</div>`).join('')
+    ? linhas.map(l => `
+        <div class="chamada-det-row ${l.cls}">
+          <div class="chamada-det-aluno">${l.ava}<span>${l.nome}</span></div>
+          <span class="chamada-status ${l.cls}"><b>${l.letra}</b> ${l.label}</span>
+        </div>`).join('')
     : '<p class="list-empty">Sem registros nesta chamada.</p>';
 
   modalChamadaDet.classList.add('show');
