@@ -99,8 +99,8 @@ router.delete('/admins/:id', autenticar, exigirNivel('master'), async (req, res)
 
 /* ===================== ALUNOS ===================== */
 
-// Lista alunos. master/adm/aluno podem ver.
-router.get('/alunos', autenticar, async (req, res) => {
+// Lista alunos. Só master/adm (protege dados pessoais dos alunos).
+router.get('/alunos', autenticar, exigirNivel('master', 'adm'), async (req, res) => {
   const r = await pool.query(
     `SELECT id, cpf, nome, email, telefone, data_nascimento AS nasc, turma, foto, estrelas
        FROM usuarios WHERE nivel='aluno' ORDER BY nome`

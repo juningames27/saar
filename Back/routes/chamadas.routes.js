@@ -5,14 +5,14 @@ import { autenticar, exigirNivel } from '../auth.js';
 
 const router = Router();
 
-// Lista todas as chamadas (histórico)
-router.get('/', autenticar, async (req, res) => {
+// Lista todas as chamadas (histórico). Só master/adm.
+router.get('/', autenticar, exigirNivel('master', 'adm'), async (req, res) => {
   const r = await pool.query('SELECT * FROM chamadas ORDER BY data DESC, turma');
   res.json(r.rows);
 });
 
-// Busca a chamada de uma turma+data específica (pra reabrir e editar)
-router.get('/:data/:turma', autenticar, async (req, res) => {
+// Busca a chamada de uma turma+data específica. Só master/adm.
+router.get('/:data/:turma', autenticar, exigirNivel('master', 'adm'), async (req, res) => {
   const r = await pool.query('SELECT * FROM chamadas WHERE data=$1 AND turma=$2', [
     req.params.data, req.params.turma,
   ]);
