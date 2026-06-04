@@ -1,25 +1,22 @@
-/* ===== Painel Admin — tema escuro/profissional ===== */
+/* Sistema SAAR — Coelho Neto */
 :root {
-  --bg: #0f172a;
-  --sidebar: #111827;
-  --sidebar-border: #1e293b;
-  --topbar: #111827;
-  --card: #1e293b;
-  --card-border: #334155;
-  --txt: #f8fafc;
-  --dim: #cbd5e1;
-  --label: #94a3b8;
-  --accent: #ebf0f9;
-  --accent2: #15419f;
-  --accent-light2: rgba(59, 130, 246, 0.15);
-  --accent-hover2: #2563eb;
-  --accent-light: rgba(59, 130, 246, 0.15);
-  --accent-hover: #2563eb;
-  --danger: #ef4444;
-  --danger-light: rgba(239, 68, 68, 0.15);
-  --good: #22c55e;
-  --input-bg: #0f172a;
-  --input-border: #475569;
+  --bg: #eef1f6;
+  --sidebar: #ffffff;
+  --sidebar-border: #e0e5ec;
+  --topbar: #ffffff;
+  --card: #ffffff;
+  --card-border: #e0e5ec;
+  --txt: #1b2733;
+  --dim: #5a6678;
+  --label: #8a96a7;
+  --accent: #14457e;
+  --accent-hover: #0f3a6b;
+  --accent-light: #e7eef7;
+  --danger: #c0392b;
+  --danger-light: #fbeae8;
+  --good: #1f7a3d;
+  --input-bg: #f6f8fb;
+  --input-border: #cbd3df;
 }
 
 * {
@@ -204,7 +201,7 @@ body {
 }
 
 .logo-chip {
-  background: #1e293b;
+  background: #f1f4f8;
   border: 1px solid var(--card-border);
   border-radius: 6px;
   padding: 4px 8px;
@@ -313,8 +310,8 @@ body {
 }
 
 .cover {
-  height: 110px;
-  background: linear-gradient(120deg, #112e7e, #030c26);
+  height: 96px;
+  background: var(--accent);
 }
 
 .avatar-wrap {
@@ -329,12 +326,12 @@ body {
   height: 100px;
   border-radius: 50%;
   overflow: hidden;
-  background: #334155;
+  background: #e7ecf3;
   border: 4px solid var(--card);
   display: grid;
   place-items: center;
   color: var(--dim);
-  box-shadow: 0 2px 10px rgba(0, 0, 0, .35);
+  box-shadow: 0 2px 8px rgba(20, 40, 70, .12);
 }
 
 .avatar svg {
@@ -1476,3 +1473,76 @@ body {
 .chamada-status.falt b { background: #ef4444; }
 .chamada-status.just   { background: rgba(245,158,11,.14); color: #f59e0b; }
 .chamada-status.just b { background: #f59e0b; }
+
+/* ===================================================================
+   Ajustes do tema claro (Coelho Neto)
+   =================================================================== */
+
+/* Cantos mais sóbrios (menos arredondado) */
+.card,
+.profile,
+.modal-card,
+.modal-mat-card,
+.modal-aluno-card,
+.confirm-card { border-radius: 8px; }
+.btn,
+.field input,
+.field select,
+.field textarea,
+.search-wrap input,
+.caro-select,
+.side-item,
+.sub-item,
+.row-btn,
+.btn-outline { border-radius: 6px; }
+
+/* Botão primário em azul institucional */
+.btn-primary { background: var(--accent); color: #fff; }
+.btn-primary:hover { background: var(--accent-hover); }
+
+/* Sombras leves no claro */
+.admin-dropdown { box-shadow: 0 8px 24px rgba(20, 40, 70, .12); }
+.confirm-card   { box-shadow: 0 16px 40px rgba(20, 40, 70, .18); }
+.toast          { box-shadow: 0 6px 20px rgba(20, 40, 70, .14); }
+.sidebar.open   { box-shadow: 4px 0 20px rgba(20, 40, 70, .14); }
+
+/* Realces (hover/cabeçalho) que antes eram branco-transparente */
+.mat-table tbody tr:hover td,
+.chamada-table tbody tr:hover td,
+.hist-row:hover td,
+.hor-table tbody tr:hover .hor-cell:not(:focus),
+.hor-table tbody tr:hover .hor-td-horario:not(:focus) { background: rgba(20, 40, 70, .035); }
+.hor-table thead tr,
+.chamada-table thead tr { background: #f3f6fa; }
+.hor-td-periodo { background: #f7f9fc; }
+.chamada-btn:hover { background: rgba(20, 40, 70, .05); }
+.admin-trigger:hover { background: rgba(20, 40, 70, .05); }
+.hor-cell:focus {
+  background: var(--accent-light) !important;
+  box-shadow: inset 0 0 0 2px var(--accent);
+}
+
+/* Fotos/placeholders claros */
+.aluno-foto,
+.modal-aluno-foto { background: #eef2f7; }
+.caro-avatar { background: color-mix(in srgb, var(--turma-cor) 16%, #eef2f7); }
+
+/* Estrela apagada em cinza claro */
+.estrela-btn { color: #cdd5e0; }
+
+/* Cronômetro sem fonte de terminal */
+.sessao-timer { font-family: inherit; letter-spacing: 0; }
+
+/* Toasts em versão clara */
+.toast-ok   { background: #e9f6ee; border: 1px solid #bfe3cb; color: #1f7a3d; }
+.toast-err  { background: #fbeae8; border: 1px solid #f0c4be; color: #c0392b; }
+.toast-info { background: #e7eef7; border: 1px solid #c4d6ea; color: #14457e; }
+
+/* Selos de nível legíveis no claro */
+.adm-nivel-chip.master, .adm-nivel-tag.master, .adm-avatar-master { color: #9a6a00; background: #fdf3da; border-color: #f0e0b0; }
+.adm-nivel-chip.adm,    .adm-nivel-tag.adm,    .adm-avatar-adm    { color: var(--accent); background: var(--accent-light); border-color: #cbd9ec; }
+.adm-nivel-chip.aluno,  .adm-nivel-tag.aluno,  .adm-avatar-aluno  { color: #5a6678; background: #eef1f5; border-color: #dfe4ec; }
+.adm-voce-tag { color: var(--good); background: #e6f4ea; }
+@supports not (color: color-mix(in srgb, red, blue)) {
+  .hor-cell.has-color { background: var(--accent-light); color: var(--accent); }
+}

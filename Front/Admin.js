@@ -89,13 +89,18 @@ document.querySelectorAll('.side-item.danger').forEach(a => {
   document.getElementById('ddVisual').addEventListener('click', () => { fechar(); abrirVisual(); });
 })();
 
-/* ===== Temas de cor (configuração de visual) ===== */
+/* ===== Cor de destaque (configuração de visual) ===== */
+// Base clara fixa; cada opção muda só a cor de destaque.
+const BASE_CLARA = {
+  '--bg':'#eef1f6','--sidebar':'#ffffff','--topbar':'#ffffff','--card':'#ffffff',
+  '--card-border':'#e0e5ec','--sidebar-border':'#e0e5ec','--txt':'#1b2733',
+  '--dim':'#5a6678','--label':'#8a96a7','--input-bg':'#f6f8fb','--input-border':'#cbd3df',
+};
 const TEMAS = {
-  azul:     { '--bg':'#0f172a','--sidebar':'#111827','--topbar':'#111827','--card':'#1e293b','--card-border':'#334155','--sidebar-border':'#1e293b','--txt':'#f8fafc','--dim':'#cbd5e1','--label':'#94a3b8','--input-bg':'#0f172a','--input-border':'#475569' },
-  vermelho: { '--bg':'#1a1012','--sidebar':'#211417','--topbar':'#211417','--card':'#2a181c','--card-border':'#3d2329','--sidebar-border':'#2a181c','--txt':'#f8fafc','--dim':'#e7cdd0','--label':'#b08a90','--input-bg':'#1a1012','--input-border':'#5a3540' },
-  roxo:     { '--bg':'#14101f','--sidebar':'#1a1230','--topbar':'#1a1230','--card':'#221a3a','--card-border':'#352a52','--sidebar-border':'#221a3a','--txt':'#f8fafc','--dim':'#d6cce7','--label':'#9b8ab0','--input-bg':'#14101f','--input-border':'#4a3d6b' },
-  preto:    { '--bg':'#0a0a0a','--sidebar':'#121212','--topbar':'#121212','--card':'#1a1a1a','--card-border':'#2a2a2a','--sidebar-border':'#1f1f1f','--txt':'#f5f5f5','--dim':'#cccccc','--label':'#888888','--input-bg':'#0a0a0a','--input-border':'#3a3a3a' },
-  branco:   { '--bg':'#f1f5f9','--sidebar':'#ffffff','--topbar':'#ffffff','--card':'#ffffff','--card-border':'#e2e8f0','--sidebar-border':'#e2e8f0','--txt':'#1e293b','--dim':'#475569','--label':'#94a3b8','--input-bg':'#f8fafc','--input-border':'#cbd5e1' },
+  azul:    { ...BASE_CLARA, '--accent':'#14457e','--accent-hover':'#0f3a6b','--accent-light':'#e7eef7' },
+  verde:   { ...BASE_CLARA, '--accent':'#1f6b4a','--accent-hover':'#17543a','--accent-light':'#e4f1ea' },
+  vinho:   { ...BASE_CLARA, '--accent':'#8f2d2d','--accent-hover':'#732222','--accent-light':'#f7e9e9' },
+  grafite: { ...BASE_CLARA, '--accent':'#3a4a5e','--accent-hover':'#2c3a4a','--accent-light':'#eaecf0' },
 };
 const TEMA_KEY = 'saar_tema';
 
