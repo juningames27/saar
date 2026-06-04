@@ -89,18 +89,14 @@ document.querySelectorAll('.side-item.danger').forEach(a => {
   document.getElementById('ddVisual').addEventListener('click', () => { fechar(); abrirVisual(); });
 })();
 
-/* ===== Cor de destaque (configuração de visual) ===== */
-// Base clara fixa; cada opção muda só a cor de destaque.
-const BASE_CLARA = {
-  '--bg':'#eef1f6','--sidebar':'#ffffff','--topbar':'#ffffff','--card':'#ffffff',
-  '--card-border':'#e0e5ec','--sidebar-border':'#e0e5ec','--txt':'#1b2733',
-  '--dim':'#5a6678','--label':'#8a96a7','--input-bg':'#f6f8fb','--input-border':'#cbd3df',
-};
+/* ===== Cores do sistema (configuração de visual) ===== */
+// Cada tema tinge fundo + barra lateral e muda a cor de destaque (sempre claro).
+const BASE_TXT = { '--txt':'#1b2733','--dim':'#5a6678','--label':'#8a96a7','--card':'#ffffff','--input-bg':'#ffffff','--input-border':'#cdd5e0' };
 const TEMAS = {
-  azul:    { ...BASE_CLARA, '--accent':'#14457e','--accent-hover':'#0f3a6b','--accent-light':'#e7eef7' },
-  verde:   { ...BASE_CLARA, '--accent':'#1f6b4a','--accent-hover':'#17543a','--accent-light':'#e4f1ea' },
-  vinho:   { ...BASE_CLARA, '--accent':'#8f2d2d','--accent-hover':'#732222','--accent-light':'#f7e9e9' },
-  grafite: { ...BASE_CLARA, '--accent':'#3a4a5e','--accent-hover':'#2c3a4a','--accent-light':'#eaecf0' },
+  azul:    { ...BASE_TXT, '--bg':'#e4ecf6','--sidebar':'#f4f8fd','--topbar':'#f4f8fd','--card-border':'#dbe3ee','--sidebar-border':'#dbe3ee','--accent':'#14457e','--accent-hover':'#0f3a6b','--accent-light':'#e2ebf7' },
+  verde:   { ...BASE_TXT, '--bg':'#e4f1e9','--sidebar':'#f3faf6','--topbar':'#f3faf6','--card-border':'#d6e6dc','--sidebar-border':'#d6e6dc','--accent':'#1f6b4a','--accent-hover':'#17543a','--accent-light':'#e1f0e8' },
+  vinho:   { ...BASE_TXT, '--bg':'#f3e8e8','--sidebar':'#fcf5f5','--topbar':'#fcf5f5','--card-border':'#ecd9d9','--sidebar-border':'#ecd9d9','--accent':'#8f2d2d','--accent-hover':'#732222','--accent-light':'#f6e6e6' },
+  grafite: { ...BASE_TXT, '--bg':'#e8ebef','--sidebar':'#f6f7f9','--topbar':'#f6f7f9','--card-border':'#dde1e7','--sidebar-border':'#dde1e7','--accent':'#3a4a5e','--accent-hover':'#2c3a4a','--accent-light':'#e7eaef' },
 };
 const TEMA_KEY = 'saar_tema';
 
@@ -150,27 +146,10 @@ navItems.forEach(b => {
   b.addEventListener('click', () => {
     const panel = b.dataset.panel;
 
-    if (panel === 'ensino') {
-      document.getElementById('subEnsino').classList.toggle('open');
-      document.getElementById('subAlunos').classList.remove('open');
-      navItems.forEach(item => item.classList.remove('active'));
-      b.classList.add('active');
-      document.querySelectorAll('.sub-item').forEach(x => x.classList.remove('active'));
-      return;
-    }
+    // Ensino e Alunos só abrem/fecham o próprio submenu (sem mexer no outro)
+    if (panel === 'ensino')  { document.getElementById('subEnsino').classList.toggle('open'); return; }
+    if (panel === 'alunos')  { document.getElementById('subAlunos').classList.toggle('open'); return; }
 
-    if (panel === 'alunos') {
-      document.getElementById('subAlunos').classList.toggle('open');
-      document.getElementById('subEnsino').classList.remove('open');
-      navItems.forEach(item => item.classList.remove('active'));
-      b.classList.add('active');
-      document.querySelectorAll('.sub-item').forEach(x => x.classList.remove('active'));
-      return;
-    }
-
-    document.getElementById('subEnsino').classList.remove('open');
-    document.getElementById('subAlunos').classList.remove('open');
-    document.querySelectorAll('.sub-item').forEach(x => x.classList.remove('active'));
     openPanel(panel);
   });
 });
