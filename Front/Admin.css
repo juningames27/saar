@@ -1567,3 +1567,20 @@ body {
 
 /* Input/textarea/select desabilitado também claro */
 .field textarea[readonly], .field select[disabled] { background: var(--input-bg); }
+
+/* ===== Sem áreas brancas: tudo segue o tema ===== */
+/* Cabeçalhos de tabela e período: tom escuro translúcido (adapta a qualquer cor) */
+.hor-table thead tr,
+.chamada-table thead tr { background: rgba(0,0,0,.05) !important; }
+.hor-td-periodo { background: rgba(0,0,0,.035) !important; }
+.mat-table thead tr,
+.adm-niveis-info { background: transparent; }
+
+/* Avatares/placeholders claros → tom do tema */
+.avatar,
+.aluno-foto,
+.modal-aluno-foto { background: var(--accent-light) !important; }
+
+/* Cova do perfil já é o accent (ok). Inputs readonly seguem o input-bg do tema. */
+.field input[readonly],
+.field textarea[readonly] { background: var(--input-bg) !important; }

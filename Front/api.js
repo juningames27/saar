@@ -92,10 +92,10 @@ window.Auth = Auth;
 
 /* ===== Temas de cor (compartilhado, por usuário) ===== */
 const TEMAS = {
-  azul:    { '--bg':'#d8e4f3','--sidebar':'#e8f0fa','--topbar':'#e8f0fa','--card':'#eef4fb','--card-border':'#c3d4ea','--sidebar-border':'#c3d4ea','--txt':'#16202c','--dim':'#4a586b','--label':'#7c8a9c','--input-bg':'#f4f8fc','--input-border':'#bccde3','--accent':'#14457e','--accent-hover':'#0f3a6b','--accent-light':'#d6e3f4' },
-  verde:   { '--bg':'#d8ece0','--sidebar':'#e6f3eb','--topbar':'#e6f3eb','--card':'#edf6f0','--card-border':'#c2dccb','--sidebar-border':'#c2dccb','--txt':'#16241c','--dim':'#47584d','--label':'#7a8a80','--input-bg':'#f3faf6','--input-border':'#bcd6c5','--accent':'#1f6b4a','--accent-hover':'#17543a','--accent-light':'#d4ebdd' },
-  vinho:   { '--bg':'#efdede','--sidebar':'#f7eaea','--topbar':'#f7eaea','--card':'#faf0f0','--card-border':'#e6cccc','--sidebar-border':'#e6cccc','--txt':'#2a1818','--dim':'#5e4a4a','--label':'#967e7e','--input-bg':'#fcf5f5','--input-border':'#e0c4c4','--accent':'#8f2d2d','--accent-hover':'#732222','--accent-light':'#f0dada' },
-  grafite: { '--bg':'#dfe3e9','--sidebar':'#eaedf1','--topbar':'#eaedf1','--card':'#f0f2f5','--card-border':'#d0d6de','--sidebar-border':'#d0d6de','--txt':'#1b2733','--dim':'#566173','--label':'#828c9b','--input-bg':'#f5f6f8','--input-border':'#c8cfd9','--accent':'#3a4a5e','--accent-hover':'#2c3a4a','--accent-light':'#e2e6ec' },
+  azul:    { '--bg':'#c9d8ee','--sidebar':'#d8e4f4','--topbar':'#d8e4f4','--card':'#e3edf8','--card-border':'#a9c2e2','--sidebar-border':'#a9c2e2','--txt':'#152232','--dim':'#3b506e','--label':'#6c809e','--input-bg':'#edf3fb','--input-border':'#a9c2e2','--accent':'#14457e','--accent-hover':'#0f3a6b','--accent-light':'#cfe0f3' },
+  verde:   { '--bg':'#c6dfce','--sidebar':'#d6ebde','--topbar':'#d6ebde','--card':'#e2f1e8','--card-border':'#a8ccb6','--sidebar-border':'#a8ccb6','--txt':'#13251b','--dim':'#3c5a48','--label':'#6c8a78','--input-bg':'#ecf6f0','--input-border':'#a8ccb6','--accent':'#1f6b4a','--accent-hover':'#17543a','--accent-light':'#cfeada' },
+  vinho:   { '--bg':'#dcaeae','--sidebar':'#e6c4c4','--topbar':'#e6c4c4','--card':'#eed6d6','--card-border':'#cd9a9a','--sidebar-border':'#cd9a9a','--txt':'#331717','--dim':'#5e4040','--label':'#926868','--input-bg':'#f3e2e2','--input-border':'#cd9a9a','--accent':'#8f2d2d','--accent-hover':'#732222','--accent-light':'#e7c6c6' },
+  grafite: { '--bg':'#cbd2dc','--sidebar':'#dbe0e8','--topbar':'#dbe0e8','--card':'#e6eaf0','--card-border':'#b3bdcb','--sidebar-border':'#b3bdcb','--txt':'#18222e','--dim':'#4a586b','--label':'#778499','--input-bg':'#eef1f6','--input-border':'#b3bdcb','--accent':'#3a4a5e','--accent-hover':'#2c3a4a','--accent-light':'#dbe1ea' },
 };
 
 function temaKeyUsuario() {
