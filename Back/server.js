@@ -3,7 +3,7 @@ import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
 
-import { initDb } from './db.js';
+import { initDb, pool } from './db.js';
 import authRoutes from './routes/auth.routes.js';
 import usuariosRoutes from './routes/usuarios.routes.js';
 import chamadasRoutes from './routes/chamadas.routes.js';
@@ -21,6 +21,17 @@ app.use(cors({ origin: origem ? origem.split(',') : true }));
 
 // Healthcheck (Render usa pra saber se o serviço está vivo)
 app.get('/', (req, res) => res.json({ ok: true, servico: 'SAAR API' }));
+
+// Ping que TOCA no banco — usado por um cron externo pra manter
+// Render e Neon acordados (evita o "alguns segundos" de cold start).
+app.get('/ping', async (req, res) => {
+  try {
+    await pool.query('SELECT 1');
+    res.json({ ok: true });
+  } catch (e) {
+    res.status(500).json({ ok: false });
+  }
+});
 
 // Rotas
 app.use('/api', authRoutes);
