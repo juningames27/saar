@@ -49,6 +49,41 @@ function toast(text, type = 'info', duration = 3000) {
 })();
 document.querySelectorAll('.side-item.danger').forEach(a => a.addEventListener('click', e => { e.preventDefault(); Auth.sair(); }));
 
+/* ===== Tema (por usuário) ===== */
+aplicarTema(temaSalvo());
+
+/* ===== Menu do nome (dropdown) ===== */
+(function () {
+  const trigger  = document.getElementById('adminTrigger');
+  const dropdown = document.getElementById('adminDropdown');
+  if (!trigger) return;
+  const fechar = () => { dropdown.classList.remove('show'); trigger.setAttribute('aria-expanded', 'false'); };
+  trigger.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const abrir = !dropdown.classList.contains('show');
+    dropdown.classList.toggle('show', abrir);
+    trigger.setAttribute('aria-expanded', String(abrir));
+  });
+  document.addEventListener('click', (e) => { if (!document.getElementById('adminMenu').contains(e.target)) fechar(); });
+  document.getElementById('ddSair').addEventListener('click', () => Auth.sair());
+  document.getElementById('ddVisual').addEventListener('click', () => { fechar(); modalVisual.classList.add('show'); });
+})();
+
+/* ===== Modal de visual ===== */
+const modalVisual = document.getElementById('modalVisual');
+document.getElementById('visualClose').addEventListener('click', () => modalVisual.classList.remove('show'));
+modalVisual.addEventListener('click', e => { if (e.target === modalVisual) modalVisual.classList.remove('show'); });
+document.getElementById('temaGrid').addEventListener('click', e => {
+  const opt = e.target.closest('.tema-opt');
+  if (!opt) return;
+  aplicarTema(opt.dataset.tema);
+  toast('Visual atualizado.', 'ok', 1500);
+});
+
+/* ===== Logo volta ao Início ===== */
+const logoHome = document.getElementById('logoHome');
+if (logoHome) logoHome.addEventListener('click', () => openPanel('inicio'));
+
 /* ===== Sessão de 2 horas ===== */
 iniciarSessaoTimer();
 
@@ -168,9 +203,23 @@ const API_BASE = window.SAAR_API || '';
 function urlArquivo(id, download) { return `${API_BASE}/api/materiais/${id}/arquivo${download ? '?download=1' : ''}`; }
 function ehImagem(nome) { return /\.(png|jpe?g|gif|webp|bmp|svg|avif)$/i.test(nome || ''); }
 function ehPdf(nome)    { return /\.pdf$/i.test(nome || ''); }
+let materiaisCarregado = false;
 async function carregarMateriais() {
-  try { const lista = await api.materiais.listar(); materiaisCache = lista.map(normalizarMaterial); renderMateriais(document.getElementById('buscaMaterial').value); }
-  catch (e) { toast('Erro ao carregar materiais: ' + e.message, 'err'); }
+  if (materiaisCarregado) {
+    renderMateriais(document.getElementById('buscaMaterial').value);
+  } else {
+    document.getElementById('matEmpty').style.display = 'block';
+    document.getElementById('matEmpty').textContent = 'Carregando materiais…';
+  }
+  try {
+    const lista = await api.materiais.listar();
+    materiaisCache = lista.map(normalizarMaterial);
+    materiaisCarregado = true;
+    document.getElementById('matEmpty').textContent = 'Nenhum material disponível ainda.';
+    renderMateriais(document.getElementById('buscaMaterial').value);
+  } catch (e) {
+    toast('Erro ao carregar materiais: ' + e.message, 'err');
+  }
 }
 function renderMateriais(filtro = '') {
   filtro = (filtro || '').toLowerCase();
@@ -279,6 +328,10 @@ function renderHorario(dados) {
 }
 document.getElementById('horMes').addEventListener('change', carregarHorario);
 document.getElementById('horMes').value = String(new Date().getMonth());
+
+/* ===== Prefetch em segundo plano (deixa pronto) ===== */
+carregarMateriais();
+carregarHorario();
 
 /* ===== Restaura a última aba aberta ===== */
 (function restaurarPainel() {

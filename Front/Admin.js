@@ -89,30 +89,12 @@ document.querySelectorAll('.side-item.danger').forEach(a => {
   document.getElementById('ddVisual').addEventListener('click', () => { fechar(); abrirVisual(); });
 })();
 
-/* ===== Cores do sistema (configuração de visual) ===== */
-// Cada tema tinge fundo + barra lateral e muda a cor de destaque (sempre claro).
-const BASE_TXT = { '--txt':'#1b2733','--dim':'#5a6678','--label':'#8a96a7','--card':'#ffffff','--input-bg':'#ffffff','--input-border':'#cdd5e0' };
-const TEMAS = {
-  azul:    { ...BASE_TXT, '--bg':'#e4ecf6','--sidebar':'#f4f8fd','--topbar':'#f4f8fd','--card-border':'#dbe3ee','--sidebar-border':'#dbe3ee','--accent':'#14457e','--accent-hover':'#0f3a6b','--accent-light':'#e2ebf7' },
-  verde:   { ...BASE_TXT, '--bg':'#e4f1e9','--sidebar':'#f3faf6','--topbar':'#f3faf6','--card-border':'#d6e6dc','--sidebar-border':'#d6e6dc','--accent':'#1f6b4a','--accent-hover':'#17543a','--accent-light':'#e1f0e8' },
-  vinho:   { ...BASE_TXT, '--bg':'#f3e8e8','--sidebar':'#fcf5f5','--topbar':'#fcf5f5','--card-border':'#ecd9d9','--sidebar-border':'#ecd9d9','--accent':'#8f2d2d','--accent-hover':'#732222','--accent-light':'#f6e6e6' },
-  grafite: { ...BASE_TXT, '--bg':'#e8ebef','--sidebar':'#f6f7f9','--topbar':'#f6f7f9','--card-border':'#dde1e7','--sidebar-border':'#dde1e7','--accent':'#3a4a5e','--accent-hover':'#2c3a4a','--accent-light':'#e7eaef' },
-};
-const TEMA_KEY = 'saar_tema';
-
-function aplicarTema(nome) {
-  const t = TEMAS[nome] || TEMAS.azul;
-  const raiz = document.documentElement;
-  Object.entries(t).forEach(([k, v]) => raiz.style.setProperty(k, v));
-  localStorage.setItem(TEMA_KEY, nome);
-  document.querySelectorAll('.tema-opt').forEach(b => b.classList.toggle('active', b.dataset.tema === nome));
-}
-aplicarTema(localStorage.getItem(TEMA_KEY) || 'azul');
+/* ===== Configuração de visual (tema por usuário, vem do api.js) ===== */
+aplicarTema(temaSalvo());
 
 const modalVisual = document.getElementById('modalVisual');
 function abrirVisual() {
-  document.querySelectorAll('.tema-opt').forEach(b =>
-    b.classList.toggle('active', b.dataset.tema === (localStorage.getItem(TEMA_KEY) || 'azul')));
+  document.querySelectorAll('.tema-opt').forEach(b => b.classList.toggle('active', b.dataset.tema === temaSalvo()));
   modalVisual.classList.add('show');
 }
 function fecharVisual() { modalVisual.classList.remove('show'); }
@@ -183,6 +165,10 @@ function openMenu()  { sidebar.classList.add('open');    overlay.classList.add('
 function closeMenu() { sidebar.classList.remove('open'); overlay.classList.remove('show'); }
 document.getElementById('menuToggle').addEventListener('click', openMenu);
 overlay.addEventListener('click', closeMenu);
+
+/* ===== Logo volta para o Início ===== */
+const logoHome = document.getElementById('logoHome');
+if (logoHome) logoHome.addEventListener('click', () => openPanel('inicio'));
 
 /* ===== Foto de perfil (preview local) ===== */
 const avatarInput = document.getElementById('avatarInput');
@@ -295,12 +281,25 @@ function urlArquivo(id, download) { return `${API_BASE}/api/materiais/${id}/arqu
 function ehImagem(nome) { return /\.(png|jpe?g|gif|webp|bmp|svg|avif)$/i.test(nome || ''); }
 function ehPdf(nome)    { return /\.pdf$/i.test(nome || ''); }
 
+let materiaisCarregado = false;
 async function carregarMateriais() {
+  // Mostra o que já está em cache na hora
+  if (materiaisCarregado) {
+    renderMateriais(document.getElementById('buscaMaterial').value);
+  } else {
+    document.getElementById('matBody').innerHTML = '';
+    document.getElementById('matEmpty').style.display = 'block';
+    document.getElementById('matEmpty').textContent = 'Carregando materiais…';
+  }
+  // Atualiza do servidor em segundo plano
   try {
     const lista = await api.materiais.listar();
     materiaisCache = lista.map(normalizarMaterial);
+    materiaisCarregado = true;
+    document.getElementById('matEmpty').textContent = 'Nenhum material encontrado.';
     renderMateriais(document.getElementById('buscaMaterial').value);
   } catch (e) {
+    if (!materiaisCarregado) document.getElementById('matEmpty').textContent = 'Não foi possível carregar.';
     toast('Erro ao carregar materiais: ' + e.message, 'err');
   }
 }
@@ -555,6 +554,7 @@ function normalizarAluno(a) {
   };
 }
 async function carregarAlunos() {
+  if (alunosCache.length) renderCarometro();   // mostra o cache na hora
   try { const lista = await api.alunos.listar(); alunosCache = lista.map(normalizarAluno); renderCarometro(); }
   catch (e) { toast('Erro ao carregar alunos: ' + e.message, 'err'); }
 }
@@ -931,6 +931,7 @@ function normalizarAdmin(a) {
   return { id: a.id, nome: a.nome, nivel: a.nivel, email: a.email || '', tel: a.tel ?? a.telefone ?? '', cpf: a.cpf || '', nasc: dataCurta(a.nasc ?? a.data_nascimento), fixo: !!a.fixo };
 }
 async function carregarAdmins() {
+  if (adminsCache.length) renderAdmins(document.getElementById('buscaAdm').value);  // cache na hora
   try { const lista = await api.admins.listar(); adminsCache = lista.map(normalizarAdmin); renderAdmins(document.getElementById('buscaAdm').value); }
   catch (e) { toast('Erro ao carregar administradores: ' + e.message, 'err'); }
 }
@@ -1052,9 +1053,10 @@ document.getElementById('buscaAdm').addEventListener('input', e => renderAdmins(
 /* ===== Sessão de 2 horas ===== */
 iniciarSessaoTimer();
 
-/* ===== Carregamento inicial (busca do banco) ===== */
+/* ===== Carregamento inicial em segundo plano (deixa tudo pronto) ===== */
 carregarAlunos();
 carregarAdmins();
+carregarMateriais();
 
 /* ===== Restaura a última aba aberta (ao atualizar a página) ===== */
 (function restaurarPainel() {

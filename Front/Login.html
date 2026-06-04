@@ -116,7 +116,7 @@
               <input type="checkbox" name="remember">
               Lembrar de mim
             </label>
-            <a href="RecuperarSenha.html" class="link">Esqueci minha senha</a>
+            <a href="Recuperarsenha.html" class="link">Esqueci minha senha</a>
           </div>
 
           <button type="submit" class="btn-entrar">Entrar</button>
@@ -131,6 +131,12 @@
   </main>
 
 <script>
+  // Aplica a cor de fundo do último tema escolhido
+  try {
+    const t = window.TEMAS && TEMAS[temaSalvo()];
+    if (t) document.body.style.background = t['--bg'];
+  } catch (e) {}
+
   // Mostrar / esconder senha
   const toggle  = document.getElementById('togglePw');
   const senha   = document.getElementById('senha');

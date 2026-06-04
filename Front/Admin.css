@@ -505,8 +505,9 @@ body {
 
 .field input[readonly] {
   color: var(--dim);
-  background: #111827;
+  background: var(--input-bg);
   cursor: default;
+  opacity: .85;
 }
 
 .field input[readonly]:focus {
@@ -1546,3 +1547,23 @@ body {
 @supports not (color: color-mix(in srgb, red, blue)) {
   .hor-cell.has-color { background: var(--accent-light); color: var(--accent); }
 }
+
+/* ===== Avatar do topo: inicial preta em círculo claro ===== */
+.admin .ava {
+  background: var(--accent-light);
+  color: #111111;
+  border: 1px solid var(--accent);
+}
+
+/* ===== Logo unificado e clicável (volta ao Início) ===== */
+.logo-link {
+  display: flex; align-items: center; gap: 10px;
+  background: var(--card); border: 1px solid var(--card-border);
+  border-radius: 8px; padding: 5px 12px; height: 36px;
+  cursor: pointer; transition: border-color .12s, box-shadow .12s;
+}
+.logo-link:hover { border-color: var(--accent); box-shadow: 0 2px 8px rgba(20,40,70,.1); }
+.logo-link img { height: 22px; width: auto; display: block; }
+
+/* Input/textarea/select desabilitado também claro */
+.field textarea[readonly], .field select[disabled] { background: var(--input-bg); }

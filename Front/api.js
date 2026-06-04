@@ -89,3 +89,31 @@ const api = {
 
 window.api = api;
 window.Auth = Auth;
+
+/* ===== Temas de cor (compartilhado, por usuário) ===== */
+const TEMAS = {
+  azul:    { '--bg':'#d8e4f3','--sidebar':'#e8f0fa','--topbar':'#e8f0fa','--card':'#eef4fb','--card-border':'#c3d4ea','--sidebar-border':'#c3d4ea','--txt':'#16202c','--dim':'#4a586b','--label':'#7c8a9c','--input-bg':'#f4f8fc','--input-border':'#bccde3','--accent':'#14457e','--accent-hover':'#0f3a6b','--accent-light':'#d6e3f4' },
+  verde:   { '--bg':'#d8ece0','--sidebar':'#e6f3eb','--topbar':'#e6f3eb','--card':'#edf6f0','--card-border':'#c2dccb','--sidebar-border':'#c2dccb','--txt':'#16241c','--dim':'#47584d','--label':'#7a8a80','--input-bg':'#f3faf6','--input-border':'#bcd6c5','--accent':'#1f6b4a','--accent-hover':'#17543a','--accent-light':'#d4ebdd' },
+  vinho:   { '--bg':'#efdede','--sidebar':'#f7eaea','--topbar':'#f7eaea','--card':'#faf0f0','--card-border':'#e6cccc','--sidebar-border':'#e6cccc','--txt':'#2a1818','--dim':'#5e4a4a','--label':'#967e7e','--input-bg':'#fcf5f5','--input-border':'#e0c4c4','--accent':'#8f2d2d','--accent-hover':'#732222','--accent-light':'#f0dada' },
+  grafite: { '--bg':'#dfe3e9','--sidebar':'#eaedf1','--topbar':'#eaedf1','--card':'#f0f2f5','--card-border':'#d0d6de','--sidebar-border':'#d0d6de','--txt':'#1b2733','--dim':'#566173','--label':'#828c9b','--input-bg':'#f5f6f8','--input-border':'#c8cfd9','--accent':'#3a4a5e','--accent-hover':'#2c3a4a','--accent-light':'#e2e6ec' },
+};
+
+function temaKeyUsuario() {
+  const u = Auth.usuario;
+  return u && u.id ? `saar_tema_${u.id}` : "saar_tema";
+}
+function temaSalvo() {
+  return localStorage.getItem(temaKeyUsuario()) || localStorage.getItem("saar_tema_ultimo") || "azul";
+}
+function aplicarTema(nome) {
+  const t = TEMAS[nome] || TEMAS.azul;
+  const raiz = document.documentElement;
+  Object.entries(t).forEach(([k, v]) => raiz.style.setProperty(k, v));
+  localStorage.setItem(temaKeyUsuario(), nome);
+  localStorage.setItem("saar_tema_ultimo", nome); // usado na tela de login
+  document.querySelectorAll(".tema-opt").forEach(b => b.classList.toggle("active", b.dataset.tema === nome));
+}
+
+window.TEMAS = TEMAS;
+window.aplicarTema = aplicarTema;
+window.temaSalvo = temaSalvo;
