@@ -95,6 +95,7 @@ aplicarTema(temaSalvo());
 const modalVisual = document.getElementById('modalVisual');
 function abrirVisual() {
   document.querySelectorAll('.tema-opt').forEach(b => b.classList.toggle('active', b.dataset.tema === temaSalvo()));
+  document.querySelectorAll('.modo-seg-btn').forEach(b => b.classList.toggle('active', b.dataset.modo === modoSalvo()));
   modalVisual.classList.add('show');
 }
 function fecharVisual() { modalVisual.classList.remove('show'); }
@@ -106,6 +107,14 @@ document.getElementById('temaGrid').addEventListener('click', e => {
   aplicarTema(opt.dataset.tema);
   toast('Visual atualizado.', 'ok', 1500);
 });
+document.getElementById('modoSeg').addEventListener('click', e => {
+  const opt = e.target.closest('.modo-seg-btn');
+  if (!opt) return;
+  aplicarModo(opt.dataset.modo);
+  toast(opt.dataset.modo === 'escuro' ? 'Modo escuro ativado.' : 'Modo claro ativado.', 'ok', 1500);
+});
+const modoToggleBtn = document.getElementById('modoToggle');
+if (modoToggleBtn) modoToggleBtn.addEventListener('click', alternarModo);
 
 /* ===== Troca de painéis (menu lateral) ===== */
 const navItems = document.querySelectorAll('.side-item[data-panel]');
@@ -572,12 +581,135 @@ document.getElementById('al-tel').addEventListener('input', function() {
   this.value = v;
 });
 
+/* ===== Editor de foto (recortar / posicionar / zoom) ===== */
+let _cropperEl = null;
+function _construirCropper() {
+  if (_cropperEl) return _cropperEl;
+  const wrap = document.createElement('div');
+  wrap.className = 'cropper-overlay';
+  wrap.innerHTML = `
+    <div class="cropper-box" role="dialog" aria-modal="true" aria-label="Ajustar foto">
+      <div class="cropper-head">
+        <h3>Ajustar foto</h3>
+        <button type="button" class="cropper-x" aria-label="Fechar">✕</button>
+      </div>
+      <div class="cropper-viewport">
+        <img class="cropper-img" alt="" draggable="false">
+        <div class="cropper-ring"></div>
+      </div>
+      <div class="cropper-zoom">
+        <span class="cropper-zoom-ic" aria-hidden="true">−</span>
+        <input type="range" class="cropper-range" min="1" max="4" step="0.01" value="1" aria-label="Aproximar">
+        <span class="cropper-zoom-ic" aria-hidden="true">+</span>
+      </div>
+      <p class="cropper-hint">Arraste a foto para posicionar · use a barra para aproximar</p>
+      <div class="cropper-actions">
+        <button type="button" class="cropper-btn cropper-cancel">Cancelar</button>
+        <button type="button" class="cropper-btn cropper-apply">Aplicar</button>
+      </div>
+    </div>`;
+  document.body.appendChild(wrap);
+  _cropperEl = wrap;
+  return wrap;
+}
+
+// Abre o editor com o arquivo escolhido. Resolve com o dataURL recortado, ou null se cancelar.
+function abrirCropper(file) {
+  return new Promise((resolve) => {
+    const el    = _construirCropper();
+    const img   = el.querySelector('.cropper-img');
+    const vp    = el.querySelector('.cropper-viewport');
+    const range = el.querySelector('.cropper-range');
+    const OUT   = 512; // tamanho final da foto (quadrada)
+
+    let V = 300, natW = 0, natH = 0, minScale = 1, scale = 1, tx = 0, ty = 0;
+
+    const clamp = () => {
+      tx = Math.min(0, Math.max(V - natW * scale, tx));
+      ty = Math.min(0, Math.max(V - natH * scale, ty));
+    };
+    const render = () => {
+      img.style.width  = (natW * scale) + 'px';
+      img.style.height = (natH * scale) + 'px';
+      img.style.transform = `translate(${tx}px, ${ty}px)`;
+    };
+    const setScale = (novo, ox = V / 2, oy = V / 2) => {
+      novo = Math.max(minScale, Math.min(minScale * 4, novo));
+      const ix = (ox - tx) / scale, iy = (oy - ty) / scale;
+      scale = novo;
+      tx = ox - ix * scale;
+      ty = oy - iy * scale;
+      clamp(); render();
+    };
+
+    img.onload = () => {
+      V = vp.clientWidth || 300;
+      natW = img.naturalWidth; natH = img.naturalHeight;
+      minScale = Math.max(V / natW, V / natH);
+      scale = minScale;
+      tx = (V - natW * scale) / 2;
+      ty = (V - natH * scale) / 2;
+      range.min = String(minScale);
+      range.max = String(minScale * 4);
+      range.step = String((minScale * 3) / 100);
+      range.value = String(minScale);
+      clamp(); render();
+    };
+    const reader = new FileReader();
+    reader.onload = () => { img.src = reader.result; };
+    reader.readAsDataURL(file);
+
+    // Zoom pela barra
+    range.oninput = () => setScale(Number(range.value));
+    const syncRange = () => { range.value = String(scale); };
+
+    // Arrastar (mouse e toque via Pointer Events)
+    let dragging = false, lastX = 0, lastY = 0;
+    const down = (e) => { dragging = true; lastX = e.clientX; lastY = e.clientY; vp.setPointerCapture?.(e.pointerId); };
+    const move = (e) => { if (!dragging) return; tx += e.clientX - lastX; ty += e.clientY - lastY; lastX = e.clientX; lastY = e.clientY; clamp(); render(); };
+    const up   = () => { dragging = false; };
+    vp.addEventListener('pointerdown', down);
+    vp.addEventListener('pointermove', move);
+    vp.addEventListener('pointerup', up);
+    vp.addEventListener('pointercancel', up);
+    vp.addEventListener('wheel', (e) => {
+      e.preventDefault();
+      const r = vp.getBoundingClientRect();
+      setScale(scale * (e.deltaY < 0 ? 1.08 : 0.92), e.clientX - r.left, e.clientY - r.top);
+      syncRange();
+    }, { passive: false });
+
+    const fechar = () => { el.classList.remove('show'); };
+    const cancelar = () => { fechar(); resolve(null); };
+    const aplicar = () => {
+      const canvas = document.createElement('canvas');
+      canvas.width = OUT; canvas.height = OUT;
+      const ctx = canvas.getContext('2d');
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, OUT, OUT);
+      const srcSize = V / scale;
+      ctx.drawImage(img, -tx / scale, -ty / scale, srcSize, srcSize, 0, 0, OUT, OUT);
+      fechar();
+      resolve(canvas.toDataURL('image/jpeg', 0.9));
+    };
+    el.querySelector('.cropper-cancel').onclick = cancelar;
+    el.querySelector('.cropper-x').onclick = cancelar;
+    el.querySelector('.cropper-apply').onclick = aplicar;
+    el.onclick = (e) => { if (e.target === el) cancelar(); };
+
+    el.classList.add('show');
+  });
+}
+
 const alunoFotoInput = document.getElementById('alunoFotoInput');
 document.getElementById('btnFotoAluno').addEventListener('click', () => alunoFotoInput.click());
 alunoFotoInput.addEventListener('change', async () => {
   const file = alunoFotoInput.files[0];
   if (!file) return;
-  alunoFotoData = await lerArquivoBase64(file);
+  const recorte = await abrirCropper(file);
+  alunoFotoInput.value = ''; // permite reescolher o mesmo arquivo
+  if (!recorte) return;
+  alunoFotoData = recorte;
   document.getElementById('alunoFotoPreview').innerHTML = `<img src="${alunoFotoData}" alt="Foto">`;
 });
 
@@ -706,7 +838,10 @@ document.getElementById('maBtnFoto').addEventListener('click', () => maFotoInput
 maFotoInput.addEventListener('change', async () => {
   const file = maFotoInput.files[0];
   if (!file) return;
-  maFotoAtual = await lerArquivoBase64(file);
+  const recorte = await abrirCropper(file);
+  maFotoInput.value = ''; // permite reescolher o mesmo arquivo
+  if (!recorte) return;
+  maFotoAtual = recorte;
   document.getElementById('maFoto').innerHTML = `<img src="${maFotoAtual}" alt="Foto">`;
   document.getElementById('maNome').textContent = document.getElementById('maEditNome').value || '';
 });

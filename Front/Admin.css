@@ -33,6 +33,13 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+/* Transição suave ao trocar de tema/modo */
+body, .sidebar, .topbar, .card, .profile, .cover, .modal-card, .modal-mat-card,
+.modal-aluno-card, .confirm-card, .field input, .field select, .field textarea,
+.btn, .side-item, .sub-item, .caro-card, .file-drop {
+  transition: background-color .2s ease, border-color .2s ease, color .2s ease, box-shadow .2s ease;
+}
+
 .shell {
   display: flex;
   min-height: 100vh;
@@ -142,15 +149,30 @@ body {
   flex-shrink: 0;
 }
 
+.side-item {
+  position: relative;
+}
+
 .side-item:hover {
-  background: transparent;
-  color: var(--accent);
+  background: var(--accent-light);
+  color: var(--accent-hover);
 }
 
 .side-item.active {
-  background: transparent;
+  background: var(--accent-light);
   color: var(--accent-hover);
   font-weight: 700;
+}
+
+.side-item.active::before {
+  content: "";
+  position: absolute;
+  left: -10px;
+  top: 8px;
+  bottom: 8px;
+  width: 3px;
+  border-radius: 3px;
+  background: var(--accent-hover);
 }
 
 .side-foot {
@@ -186,9 +208,11 @@ body {
   justify-content: space-between;
   gap: 16px;
   padding: 12px 24px;
+  box-shadow: 0 1px 0 rgba(0,0,0,.02), 0 4px 14px -10px rgba(20,40,70,.18);
 }
 
-.topbar-left {
+.topbar-left,
+.topbar-right {
   display: flex;
   align-items: center;
   gap: 14px;
@@ -420,10 +444,11 @@ body {
 /* ===== Cards / formulários ===== */
 .card {
   border: 1px solid var(--card-border);
-  border-radius: 12px;
+  border-radius: 14px;
   background: var(--card);
   padding: 24px;
   margin-bottom: 16px;
+  box-shadow: 0 1px 2px rgba(20,40,70,.03), 0 10px 30px -22px rgba(20,40,70,.25);
 }
 
 .card-head {
@@ -577,10 +602,20 @@ body {
 .btn-primary {
   background: var(--accent-hover);
   color: #fff;
+  box-shadow: 0 6px 16px -8px var(--accent-hover);
 }
 
 .btn-primary:hover {
-  background: var(--accent2);
+  background: color-mix(in srgb, var(--accent-hover) 85%, black);
+  transform: translateY(-1px);
+  box-shadow: 0 10px 22px -10px var(--accent-hover);
+}
+@supports not (color: color-mix(in srgb, red, blue)) {
+  .btn-primary:hover { background: var(--accent); }
+}
+
+.btn-primary:active {
+  transform: translateY(0);
 }
 
 .btn-ghost {
@@ -591,7 +626,7 @@ body {
 
 .btn-ghost:hover {
   color: var(--txt);
-  background: #0f172a;
+  background: var(--input-bg);
 }
 
 .form-msg {
@@ -701,7 +736,7 @@ body {
 
 .modal-close:hover {
   color: var(--txt);
-  background: #0f172a;
+  background: var(--input-bg);
 }
 
 .modal-close svg {
@@ -1584,3 +1619,144 @@ body {
 /* Cova do perfil já é o accent (ok). Inputs readonly seguem o input-bg do tema. */
 .field input[readonly],
 .field textarea[readonly] { background: var(--input-bg) !important; }
+
+/* ===================================================================
+   Alternância de modo (claro / escuro)
+   =================================================================== */
+
+/* Botão redondo de acesso rápido (topo) */
+.modo-toggle {
+  width: 38px; height: 38px; border-radius: 50%; flex-shrink: 0;
+  border: 1px solid var(--card-border); background: var(--card); color: var(--dim);
+  cursor: pointer; display: grid; place-items: center; position: relative;
+  transition: background .15s, border-color .15s, color .15s, transform .15s;
+}
+.modo-toggle:hover { color: var(--accent-hover); border-color: var(--accent-hover); transform: translateY(-1px); }
+.modo-toggle .modo-icon {
+  width: 18px; height: 18px; position: absolute;
+  transition: opacity .25s ease, transform .35s ease;
+}
+.modo-toggle .modo-icon-lua { opacity: 0; transform: scale(.4) rotate(-50deg); }
+.modo-toggle .modo-icon-sol { opacity: 1; transform: scale(1) rotate(0deg); }
+html[data-modo="escuro"] .modo-toggle .modo-icon-sol { opacity: 0; transform: scale(.4) rotate(50deg); }
+html[data-modo="escuro"] .modo-toggle .modo-icon-lua { opacity: 1; transform: scale(1) rotate(0deg); }
+
+/* Controle segmentado "Claro / Escuro" (dentro do modal de visual) */
+.modo-seg {
+  display: flex; gap: 6px; padding: 4px; margin-bottom: 20px;
+  border-radius: 12px; background: var(--input-bg); border: 1px solid var(--card-border);
+}
+.modo-seg-btn {
+  flex: 1; display: flex; align-items: center; justify-content: center; gap: 8px;
+  padding: 10px 10px; border-radius: 9px; border: none; background: transparent;
+  color: var(--dim); font-family: inherit; font-size: .85rem; font-weight: 700;
+  cursor: pointer; transition: all .15s;
+}
+.modo-seg-btn svg { width: 15px; height: 15px; }
+.modo-seg-btn:hover { color: var(--txt); }
+.modo-seg-btn.active { background: var(--card); color: var(--accent-hover); box-shadow: 0 2px 10px rgba(20,40,70,.1); }
+
+/* ===================================================================
+   Modo escuro — ajustes finos sobre elementos com cor fixa
+   =================================================================== */
+html[data-modo="escuro"] {
+  --danger: #f0645a;
+  --danger-light: rgba(240,100,90,.14);
+  --good: #3ddc7e;
+}
+
+html[data-modo="escuro"] .hor-table thead tr,
+html[data-modo="escuro"] .chamada-table thead tr { background: rgba(255,255,255,.05) !important; }
+html[data-modo="escuro"] .hor-td-periodo { background: rgba(255,255,255,.03) !important; }
+
+html[data-modo="escuro"] .mat-table tbody tr:hover td,
+html[data-modo="escuro"] .chamada-table tbody tr:hover td,
+html[data-modo="escuro"] .hist-row:hover td,
+html[data-modo="escuro"] .hor-table tbody tr:hover .hor-cell:not(:focus),
+html[data-modo="escuro"] .hor-table tbody tr:hover .hor-td-horario:not(:focus) { background: rgba(255,255,255,.04); }
+html[data-modo="escuro"] .chamada-btn:hover { background: rgba(255,255,255,.08); }
+html[data-modo="escuro"] .admin-trigger:hover { background: rgba(255,255,255,.06); }
+
+html[data-modo="escuro"] .admin-dropdown { box-shadow: 0 12px 32px rgba(0,0,0,.45); }
+html[data-modo="escuro"] .confirm-card   { box-shadow: 0 20px 50px rgba(0,0,0,.55); }
+html[data-modo="escuro"] .toast          { box-shadow: 0 10px 28px rgba(0,0,0,.5); }
+html[data-modo="escuro"] .sidebar.open   { box-shadow: 4px 0 24px rgba(0,0,0,.5); }
+html[data-modo="escuro"] .card,
+html[data-modo="escuro"] .topbar { box-shadow: 0 10px 30px -22px rgba(0,0,0,.6); }
+
+html[data-modo="escuro"] .aluno-foto,
+html[data-modo="escuro"] .modal-aluno-foto { background: #17223a; }
+html[data-modo="escuro"] .caro-avatar { background: color-mix(in srgb, var(--turma-cor) 20%, #17223a); }
+@supports not (color: color-mix(in srgb, red, blue)) {
+  html[data-modo="escuro"] .caro-avatar { background: rgba(59,130,246,.18); }
+}
+
+html[data-modo="escuro"] .estrela-btn { color: #384560; }
+
+html[data-modo="escuro"] .toast-ok   { background: #133523; border: 1px solid #1f7a3d; color: #8fe3ab; }
+html[data-modo="escuro"] .toast-err  { background: #3a1613; border: 1px solid #c0392b; color: #ffb3ab; }
+html[data-modo="escuro"] .toast-info { background: #112944; border: 1px solid var(--accent); color: #a9cdf5; }
+
+html[data-modo="escuro"] .adm-nivel-chip.master, html[data-modo="escuro"] .adm-nivel-tag.master, html[data-modo="escuro"] .adm-avatar-master { color: #fde047; background: rgba(234,179,8,.12); border-color: rgba(234,179,8,.3); }
+html[data-modo="escuro"] .adm-nivel-chip.adm,    html[data-modo="escuro"] .adm-nivel-tag.adm,    html[data-modo="escuro"] .adm-avatar-adm    { color: var(--accent); background: var(--accent-light); border-color: rgba(88,147,219,.3); }
+html[data-modo="escuro"] .adm-nivel-chip.aluno,  html[data-modo="escuro"] .adm-nivel-tag.aluno,  html[data-modo="escuro"] .adm-avatar-aluno  { color: #cbd5e1; background: rgba(148,163,184,.12); border-color: rgba(148,163,184,.3); }
+html[data-modo="escuro"] .adm-voce-tag { color: #3ddc7e; background: rgba(61,220,126,.12); }
+
+html[data-modo="escuro"] .admin .ava { color: #0b1220; }
+html[data-modo="escuro"] .logo-link:hover { box-shadow: 0 4px 14px rgba(0,0,0,.4); }
+
+/* ===== Editor de foto (cropper) ===== */
+.cropper-overlay {
+  position: fixed; inset: 0; z-index: 9999;
+  display: none; align-items: center; justify-content: center;
+  background: rgba(8, 14, 24, .62); backdrop-filter: blur(3px);
+  padding: 20px;
+}
+.cropper-overlay.show { display: flex; }
+.cropper-box {
+  width: 360px; max-width: 100%;
+  background: var(--card); border: 1px solid var(--card-border);
+  border-radius: 18px; padding: 18px;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, .35);
+  animation: cropper-in .18s ease;
+}
+@keyframes cropper-in { from { opacity: 0; transform: translateY(8px) scale(.98); } to { opacity: 1; transform: none; } }
+.cropper-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+.cropper-head h3 { font-size: 1.05rem; color: var(--txt); margin: 0; }
+.cropper-x {
+  border: none; background: transparent; color: var(--dim);
+  font-size: 1.1rem; cursor: pointer; width: 30px; height: 30px; border-radius: 8px;
+}
+.cropper-x:hover { background: var(--input-bg); color: var(--txt); }
+.cropper-viewport {
+  position: relative; width: 300px; height: 300px; max-width: 100%;
+  margin: 0 auto; border-radius: 12px; overflow: hidden;
+  background: #0b1220; cursor: grab; touch-action: none; user-select: none;
+}
+.cropper-viewport:active { cursor: grabbing; }
+.cropper-img { position: absolute; top: 0; left: 0; transform-origin: 0 0; pointer-events: none; user-select: none; -webkit-user-drag: none; }
+.cropper-ring {
+  position: absolute; inset: 0; pointer-events: none;
+  box-shadow: 0 0 0 9999px rgba(11, 18, 32, .0);
+  border-radius: 12px;
+}
+/* círculo-guia mostrando o recorte final (avatar redondo) */
+.cropper-ring::after {
+  content: ''; position: absolute; inset: 0; margin: auto;
+  width: 100%; height: 100%; border-radius: 50%;
+  box-shadow: 0 0 0 9999px rgba(11, 18, 32, .55);
+  outline: 2px solid rgba(255, 255, 255, .85);
+}
+.cropper-zoom { display: flex; align-items: center; gap: 10px; margin: 16px 4px 4px; }
+.cropper-zoom-ic { color: var(--dim); font-size: 1.1rem; width: 14px; text-align: center; }
+.cropper-range { flex: 1; accent-color: var(--accent); cursor: pointer; }
+.cropper-hint { font-size: .78rem; color: var(--label); text-align: center; margin: 8px 0 0; }
+.cropper-actions { display: flex; gap: 10px; margin-top: 16px; }
+.cropper-btn {
+  flex: 1; padding: 11px 0; border-radius: 10px; font-size: .92rem; font-weight: 600;
+  cursor: pointer; border: 1px solid transparent; transition: filter .15s, background .15s;
+}
+.cropper-cancel { background: var(--input-bg); border-color: var(--card-border); color: var(--txt); }
+.cropper-cancel:hover { filter: brightness(.96); }
+.cropper-apply { background: var(--accent); color: #fff; }
+.cropper-apply:hover { background: var(--accent-hover); }

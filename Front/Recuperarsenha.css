@@ -17,6 +17,10 @@
   border-radius:20px;
   box-shadow:0 26px 60px -30px rgba(0,0,0,.6);
   padding:38px 36px;
+  transition:background-color .25s ease, box-shadow .25s ease;
+}
+html[data-modo="claro"] .recover-card{
+  box-shadow:0 26px 60px -38px rgba(18,51,40,.3), inset 0 0 0 1px var(--border);
 }
 
 /* link de voltar */
@@ -56,11 +60,11 @@
   width:26px; height:26px; border-radius:50%;
   display:grid; place-items:center;
   font-size:.8rem; font-weight:700;
-  background:rgba(255,255,255,.12); color:var(--on-teal-soft);
+  background:var(--check-bg); color:var(--on-teal-soft);
   border:1px solid var(--line-teal);
   transition:all .2s;
 }
-.steps .dot.active{ background:var(--mint); color:var(--teal-3); border-color:var(--mint); }
+.steps .dot.active{ background:var(--mint); color:var(--on-mint); border-color:var(--mint); }
 .steps .bar{ width:38px; height:2px; background:var(--line-teal); border-radius:2px; transition:all .2s; }
 .steps .bar.active{ background:var(--mint); }
 
@@ -71,13 +75,14 @@
 /* mensagem de erro */
 .error-msg{
   display:none;
-  background:rgba(255,99,99,.14);
-  border:1px solid rgba(255,99,99,.4);
-  color:#ffd5d5;
+  background:var(--err-bg);
+  border:1px solid var(--err-border);
+  color:var(--err-ink);
   font-size:.85rem;
   padding:10px 12px;
   border-radius:8px;
   margin-bottom:16px;
+  transition:background-color .2s ease, border-color .2s ease, color .2s ease;
 }
 .error-msg.show{ display:block; }
 
@@ -87,10 +92,10 @@
 /* botão (mesmo visual do botão Entrar) */
 .btn-primary{
   width:100%; font-family:inherit; font-size:1rem; font-weight:800;
-  color:var(--teal-3); padding:13px; border:none; border-radius:8px;
+  color:var(--on-mint); padding:13px; border:none; border-radius:8px;
   background:var(--mint); cursor:pointer; text-align:center; text-decoration:none;
   display:block;
-  transition:background .15s, transform .12s, box-shadow .15s;
+  transition:background-color .15s, transform .12s, box-shadow .15s;
 }
 .btn-primary:hover{ background:var(--mint-2); box-shadow:0 10px 22px -10px rgba(31,212,154,.65); }
 .btn-primary:active{ transform:translateY(1px); }

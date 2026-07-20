@@ -1,5 +1,6 @@
-/* ===== Tema (mude as cores aqui) ===== */
-:root{
+/* ===== Tema (mude as cores aqui) — modo escuro (padrão) ===== */
+:root,
+html[data-modo="escuro"]{
   --teal-1:#10876a;   /* degradê: início  */
   --teal-2:#0b5544;   /* degradê: meio    */
   --teal-3:#063a2e;   /* degradê: fim / fundo */
@@ -13,6 +14,29 @@
   --line-teal:rgba(255,255,255,.16);
   --surface:#0b5544;  /* faixa de logos   */
   --border:#084335;
+  --err-bg:rgba(255,99,99,.14); --err-border:rgba(255,99,99,.4); --err-ink:#ffd5d5;
+  --on-mint:#063a2e;
+  --check-bg:rgba(255,255,255,.12);
+}
+
+/* ===== Tema — modo claro ===== */
+html[data-modo="claro"]{
+  --teal-1:#eef8f3;
+  --teal-2:#e2f1ea;
+  --teal-3:#f7fbf9;
+  --panel:#ffffff;
+  --mint:#0f8f68;
+  --mint-2:#0c7a58;
+  --field:#ffffff;
+  --field-ink:#123328;
+  --on-teal:#123328;
+  --on-teal-soft:rgba(18,51,40,.66);
+  --line-teal:rgba(18,51,40,.14);
+  --surface:#ffffff;
+  --border:#e1ece6;
+  --err-bg:#fbeae8; --err-border:#f0c4be; --err-ink:#c0392b;
+  --on-mint:#ffffff;
+  --check-bg:rgba(18,51,40,.05);
 }
 
 *{ margin:0; padding:0; box-sizing:border-box; }
@@ -25,6 +49,7 @@ body{
   display:flex;
   flex-direction:column;
   -webkit-font-smoothing:antialiased;
+  transition:background-color .25s ease, color .25s ease;
 }
 
 /* ===== Faixa superior com os logos ===== */
@@ -37,17 +62,33 @@ body{
   gap:16px;
   flex-wrap:wrap;
   padding:14px 32px;
+  transition:background-color .25s ease, border-color .25s ease;
 }
 .topbar-left,
 .topbar-right{ display:flex; align-items:center; gap:22px; }
 .logo-saar{ height:48px; width:auto; display:block; }
 .logo-org{ height:40px; width:auto; display:block; }
 
+/* ===== Botão de alternar claro/escuro ===== */
+.modo-toggle{
+  width:38px; height:38px; border-radius:50%; flex-shrink:0;
+  border:1px solid var(--line-teal); background:rgba(255,255,255,.06); color:var(--on-teal);
+  cursor:pointer; display:grid; place-items:center; position:relative;
+  transition:background .15s, border-color .15s, transform .15s;
+}
+.modo-toggle:hover{ background:rgba(255,255,255,.14); transform:translateY(-1px); }
+.modo-toggle .modo-icon{ width:18px; height:18px; position:absolute; transition:opacity .25s ease, transform .35s ease; }
+.modo-toggle .modo-icon-lua{ opacity:0; transform:scale(.4) rotate(-50deg); }
+.modo-toggle .modo-icon-sol{ opacity:1; transform:scale(1) rotate(0deg); }
+html[data-modo="escuro"] .modo-toggle .modo-icon-sol{ opacity:0; transform:scale(.4) rotate(50deg); }
+html[data-modo="escuro"] .modo-toggle .modo-icon-lua{ opacity:1; transform:scale(1) rotate(0deg); }
+
 /* ===== Login em tela cheia ===== */
 .login-shell{
   flex:1 0 auto;
   display:flex;
   background:linear-gradient(135deg, var(--teal-1) 0%, var(--teal-2) 48%, var(--teal-3) 100%);
+  transition:background .3s ease;
 }
 .card{
   flex:1;
@@ -79,6 +120,10 @@ body{
   align-items:center;
   justify-content:center;
   padding:48px;
+  transition:background-color .25s ease, box-shadow .25s ease;
+}
+html[data-modo="claro"] .access{
+  box-shadow:-24px 0 60px -38px rgba(18,51,40,.35), inset 0 0 0 1px var(--border);
 }
 .login-form{ width:100%; max-width:330px; margin:0 auto; }
 .login-form h2{ font-size:1.7rem; font-weight:800; color:var(--on-teal); }
@@ -119,20 +164,20 @@ body{
 .remember{ display:flex; align-items:center; gap:8px; font-size:.88rem; color:var(--on-teal-soft); cursor:pointer; user-select:none; }
 .remember input{
   appearance:none; -webkit-appearance:none; width:17px; height:17px;
-  border:1.5px solid var(--line-teal); border-radius:4px; background:rgba(255,255,255,.12);
+  border:1.5px solid var(--line-teal); border-radius:4px; background:var(--check-bg);
   cursor:pointer; position:relative; transition:all .15s; flex-shrink:0;
 }
 .remember input:checked{ background:var(--mint); border-color:var(--mint); }
 .remember input:checked::after{
   content:""; position:absolute; left:5px; top:1.5px; width:4px; height:8px;
-  border:solid var(--teal-3); border-width:0 2px 2px 0; transform:rotate(45deg);
+  border:solid var(--on-mint); border-width:0 2px 2px 0; transform:rotate(45deg);
 }
 .link{ color:var(--mint); font-size:.88rem; font-weight:700; text-decoration:none; }
 .link:hover{ text-decoration:underline; text-underline-offset:3px; }
 
 .btn-entrar{
   width:100%; font-family:inherit; font-size:1rem; font-weight:800;
-  color:var(--teal-3); padding:13px; border:none; border-radius:8px;
+  color:var(--on-mint); padding:13px; border:none; border-radius:8px;
   background:var(--mint); cursor:pointer;
   transition:background .15s, transform .12s, box-shadow .15s;
 }

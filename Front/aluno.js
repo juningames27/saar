@@ -66,7 +66,12 @@ aplicarTema(temaSalvo());
   });
   document.addEventListener('click', (e) => { if (!document.getElementById('adminMenu').contains(e.target)) fechar(); });
   document.getElementById('ddSair').addEventListener('click', () => Auth.sair());
-  document.getElementById('ddVisual').addEventListener('click', () => { fechar(); modalVisual.classList.add('show'); });
+  document.getElementById('ddVisual').addEventListener('click', () => {
+    fechar();
+    document.querySelectorAll('.tema-opt').forEach(b => b.classList.toggle('active', b.dataset.tema === temaSalvo()));
+    document.querySelectorAll('.modo-seg-btn').forEach(b => b.classList.toggle('active', b.dataset.modo === modoSalvo()));
+    modalVisual.classList.add('show');
+  });
 })();
 
 /* ===== Modal de visual ===== */
@@ -79,6 +84,14 @@ document.getElementById('temaGrid').addEventListener('click', e => {
   aplicarTema(opt.dataset.tema);
   toast('Visual atualizado.', 'ok', 1500);
 });
+document.getElementById('modoSeg').addEventListener('click', e => {
+  const opt = e.target.closest('.modo-seg-btn');
+  if (!opt) return;
+  aplicarModo(opt.dataset.modo);
+  toast(opt.dataset.modo === 'escuro' ? 'Modo escuro ativado.' : 'Modo claro ativado.', 'ok', 1500);
+});
+const modoToggleBtn = document.getElementById('modoToggle');
+if (modoToggleBtn) modoToggleBtn.addEventListener('click', alternarModo);
 
 /* ===== Logo volta ao Início ===== */
 const logoHome = document.getElementById('logoHome');

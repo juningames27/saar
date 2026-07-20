@@ -90,12 +90,26 @@ const api = {
 window.api = api;
 window.Auth = Auth;
 
-/* ===== Temas de cor (compartilhado, por usuário) ===== */
+/* ===== Temas de cor x modo (claro/escuro) — compartilhado, por usuário ===== */
+const NEUTROS_ESCURO = { '--bg':'#0b1220','--sidebar':'#0f1a2c','--topbar':'#0f1a2c','--card':'#111c30','--card-border':'#22314a','--sidebar-border':'#22314a','--txt':'#e8edf7','--dim':'#9aabc4','--label':'#66799a','--input-bg':'#0d1626','--input-border':'#283854' };
+
 const TEMAS = {
-  azul:    { '--bg':'#c9d8ee','--sidebar':'#d8e4f4','--topbar':'#d8e4f4','--card':'#e3edf8','--card-border':'#a9c2e2','--sidebar-border':'#a9c2e2','--txt':'#152232','--dim':'#3b506e','--label':'#6c809e','--input-bg':'#edf3fb','--input-border':'#a9c2e2','--accent':'#14457e','--accent-hover':'#0f3a6b','--accent-light':'#cfe0f3' },
-  verde:   { '--bg':'#c6dfce','--sidebar':'#d6ebde','--topbar':'#d6ebde','--card':'#e2f1e8','--card-border':'#a8ccb6','--sidebar-border':'#a8ccb6','--txt':'#13251b','--dim':'#3c5a48','--label':'#6c8a78','--input-bg':'#ecf6f0','--input-border':'#a8ccb6','--accent':'#1f6b4a','--accent-hover':'#17543a','--accent-light':'#cfeada' },
-  vinho:   { '--bg':'#dcaeae','--sidebar':'#e6c4c4','--topbar':'#e6c4c4','--card':'#eed6d6','--card-border':'#cd9a9a','--sidebar-border':'#cd9a9a','--txt':'#331717','--dim':'#5e4040','--label':'#926868','--input-bg':'#f3e2e2','--input-border':'#cd9a9a','--accent':'#8f2d2d','--accent-hover':'#732222','--accent-light':'#e7c6c6' },
-  grafite: { '--bg':'#cbd2dc','--sidebar':'#dbe0e8','--topbar':'#dbe0e8','--card':'#e6eaf0','--card-border':'#b3bdcb','--sidebar-border':'#b3bdcb','--txt':'#18222e','--dim':'#4a586b','--label':'#778499','--input-bg':'#eef1f6','--input-border':'#b3bdcb','--accent':'#3a4a5e','--accent-hover':'#2c3a4a','--accent-light':'#dbe1ea' },
+  azul: {
+    claro:  { '--bg':'#eef1f7','--sidebar':'#ffffff','--topbar':'#ffffff','--card':'#ffffff','--card-border':'#dde6f2','--sidebar-border':'#dde6f2','--txt':'#152232','--dim':'#4d5f78','--label':'#8a9ab0','--input-bg':'#f5f8fc','--input-border':'#cddaeb','--accent':'#14457e','--accent-hover':'#0f3a6b','--accent-light':'#e7eef7' },
+    escuro: { ...NEUTROS_ESCURO, '--accent':'#5893db','--accent-hover':'#78a7e3','--accent-light':'rgba(88,147,219,.16)' },
+  },
+  verde: {
+    claro:  { '--bg':'#eef6f1','--sidebar':'#ffffff','--topbar':'#ffffff','--card':'#ffffff','--card-border':'#d8ebe1','--sidebar-border':'#d8ebe1','--txt':'#152a1f','--dim':'#48604f','--label':'#84a091','--input-bg':'#f4faf6','--input-border':'#c7ddce','--accent':'#1f6b4a','--accent-hover':'#17543a','--accent-light':'#e2f1e8' },
+    escuro: { ...NEUTROS_ESCURO, '--accent':'#3fb474','--accent-hover':'#5cc389','--accent-light':'rgba(63,180,116,.16)' },
+  },
+  vinho: {
+    claro:  { '--bg':'#f7eeee','--sidebar':'#ffffff','--topbar':'#ffffff','--card':'#ffffff','--card-border':'#ecd7d7','--sidebar-border':'#ecd7d7','--txt':'#2c1414','--dim':'#6a4c4c','--label':'#a17e7e','--input-bg':'#fbf3f3','--input-border':'#dfc2c2','--accent':'#8f2d2d','--accent-hover':'#732222','--accent-light':'#eed6d6' },
+    escuro: { ...NEUTROS_ESCURO, '--accent':'#d97878','--accent-hover':'#e2908f','--accent-light':'rgba(217,120,120,.16)' },
+  },
+  grafite: {
+    claro:  { '--bg':'#eef0f3','--sidebar':'#ffffff','--topbar':'#ffffff','--card':'#ffffff','--card-border':'#dde2e9','--sidebar-border':'#dde2e9','--txt':'#1a222c','--dim':'#57647a','--label':'#8b96a7','--input-bg':'#f5f7fa','--input-border':'#ccd3dd','--accent':'#3a4a5e','--accent-hover':'#2c3a4a','--accent-light':'#e6eaf0' },
+    escuro: { ...NEUTROS_ESCURO, '--accent':'#93a8bd','--accent-hover':'#a9bccd','--accent-light':'rgba(147,168,189,.16)' },
+  },
 };
 
 function temaKeyUsuario() {
@@ -105,15 +119,38 @@ function temaKeyUsuario() {
 function temaSalvo() {
   return localStorage.getItem(temaKeyUsuario()) || localStorage.getItem("saar_tema_ultimo") || "azul";
 }
+function modoKeyUsuario() {
+  const u = Auth.usuario;
+  return u && u.id ? `saar_modo_${u.id}` : "saar_modo";
+}
+function modoSalvo() {
+  return localStorage.getItem(modoKeyUsuario()) || localStorage.getItem("saar_modo_ultimo") || "escuro";
+}
 function aplicarTema(nome) {
-  const t = TEMAS[nome] || TEMAS.azul;
-  const raiz = document.documentElement;
+  const modo   = modoSalvo();
+  const paleta = TEMAS[nome] || TEMAS.azul;
+  const t      = paleta[modo] || paleta.claro;
+  const raiz   = document.documentElement;
   Object.entries(t).forEach(([k, v]) => raiz.style.setProperty(k, v));
+  raiz.setAttribute("data-modo", modo);
   localStorage.setItem(temaKeyUsuario(), nome);
   localStorage.setItem("saar_tema_ultimo", nome); // usado na tela de login
   document.querySelectorAll(".tema-opt").forEach(b => b.classList.toggle("active", b.dataset.tema === nome));
+  document.querySelectorAll(".modo-seg-btn").forEach(b => b.classList.toggle("active", b.dataset.modo === modo));
+  document.querySelectorAll(".modo-toggle").forEach(b => b.setAttribute("aria-pressed", String(modo === "escuro")));
+}
+function aplicarModo(modo) {
+  localStorage.setItem(modoKeyUsuario(), modo);
+  localStorage.setItem("saar_modo_ultimo", modo); // usado na tela de login
+  aplicarTema(temaSalvo());
+}
+function alternarModo() {
+  aplicarModo(modoSalvo() === "escuro" ? "claro" : "escuro");
 }
 
 window.TEMAS = TEMAS;
 window.aplicarTema = aplicarTema;
 window.temaSalvo = temaSalvo;
+window.aplicarModo = aplicarModo;
+window.modoSalvo = modoSalvo;
+window.alternarModo = alternarModo;

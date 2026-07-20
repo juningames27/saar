@@ -77,6 +77,12 @@
             <img src="semed.png" alt="SEMED">
           </button>
         </div>
+        <div class="topbar-right">
+        <button class="modo-toggle" id="modoToggle" type="button" aria-pressed="false" aria-label="Alternar tema claro/escuro" title="Tema claro/escuro">
+          <svg class="modo-icon modo-icon-sol" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+          <svg class="modo-icon modo-icon-lua" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </button>
+
         <div class="admin" id="adminMenu">
           <button class="admin-trigger" id="adminTrigger" aria-haspopup="true" aria-expanded="false">
             <div class="who"><b id="topName">Aluno</b><span>Aluno</span></div>
@@ -93,6 +99,7 @@
               Sair
             </button>
           </div>
+        </div>
         </div>
       </header>
 
@@ -265,8 +272,18 @@
         </div>
         <div>
           <h2>Configuração de visual</h2>
-          <p>Escolha a cor do seu sistema.</p>
+          <p>Escolha o modo e a cor do seu sistema.</p>
         </div>
+      </div>
+      <div class="modo-seg" id="modoSeg" role="tablist" aria-label="Modo de exibição">
+        <button class="modo-seg-btn" data-modo="claro" type="button">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+          Claro
+        </button>
+        <button class="modo-seg-btn" data-modo="escuro" type="button">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+          Escuro
+        </button>
       </div>
       <div class="tema-grid" id="temaGrid">
         <button class="tema-opt" data-tema="azul"><span class="tema-amostra" style="background:#14457e"></span><span>Azul</span></button>
